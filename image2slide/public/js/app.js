@@ -7,6 +7,7 @@ class App {
         this.initFileDragDrop();
     }
     initFileDragDrop() {
+        let _class = this;
         let isAdvancedUpload = function () {
             let div = document.createElement('div');
             return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
@@ -21,7 +22,7 @@ class App {
             }).on('dragleave dragend drop', function () {
                 $form.removeClass('is-dragover');
             }).on('drop', function (e) {
-                this.droppedFiles = e.originalEvent.dataTransfer.files;
+                _class.droppedFiles = e.originalEvent.dataTransfer.files;
             });
         }
         $form.on('submit', function (e) {
@@ -30,8 +31,8 @@ class App {
             if (isAdvancedUpload) {
                 e.preventDefault();
                 let ajaxData = new FormData($form.get(0));
-                if (this.droppedFiles) {
-                    $.each(this.droppedFiles, function (i, file) {
+                if (_class.droppedFiles) {
+                    $.each(_class.droppedFiles, function (i, file) {
                         ajaxData.append($input.attr('name'), file);
                     });
                 }
