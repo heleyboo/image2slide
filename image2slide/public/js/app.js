@@ -1,11 +1,22 @@
+class RequestConst {
+    static get SUCCESS_CODE() {
+        return 0;
+    }
+    static get FAIL_CODE() {
+        return 1;
+    }
+}
+
 class App {
     constructor() {
         this.droppedFiles = false;
+        this.uploadedFilesList = [];
     }
 
     run() {
         this.initFileDragDrop();
     }
+
     initFileDragDrop() {
         let _class = this;
         let isAdvancedUpload = function () {
@@ -36,6 +47,7 @@ class App {
                         ajaxData.append($input.attr('name'), file);
                     });
                 }
+                ajaxData._token = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
                     url: $form.attr('action'),
                     type: $form.attr('method'),
@@ -48,8 +60,9 @@ class App {
                         $form.removeClass('is-uploading');
                     },
                     success: function (data) {
-                        $form.addClass(data.success == true ? 'is-success' : 'is-error');
-                        if (!data.success) $errorMsg.text(data.error);
+                        $form.addClass(data.status == RequestConst.SUCCESS_CODE ? 'is-success' : 'is-error');
+                        if (data.status != RequestConst.SUCCESS_CODE) $errorMsg.text(data.error);
+                        _class.uploadedFilesList.push(data.fileName);
                     },
                     error: function () {
                         // Log the error, show an alert, whatever works for you

@@ -15,3 +15,18 @@ Route::get('/',  [
     'as'=> 'index',
     'uses'=> 'IndexController@index'
 ]);
+
+Route::post('/upload',  [
+    'as'=> 'upload',
+    'uses'=> 'ImageProcessController@upload'
+]);
+
+Route::post('/detect-objects',  [
+    'as'=> 'detectObjects',
+    'uses'=> 'ImageProcessController@detectObjects'
+]);
+
+Route::post('/get-pptx',  [
+    'as'=> 'getPPTX',
+    'uses'=> 'ImageProcessController@getPPTX'
+]);
