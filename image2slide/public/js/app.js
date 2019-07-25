@@ -34,6 +34,7 @@ class App {
                 $form.removeClass('is-dragover');
             }).on('drop', function (e) {
                 _class.droppedFiles = e.originalEvent.dataTransfer.files;
+                _class.displayOriginalImage()
             });
         }
         $form.on('submit', function (e) {
@@ -73,4 +74,46 @@ class App {
             }
         });
     }
+
+    displayOriginalImage() {
+        //TODO display image after choose file
+    }
+
+    detectObjects() {
+        //TODO send adjusted corners and get detection file + preprocessing image
+    }
+
+    downloadPPTX() {
+        //TODO send updated detection objects and download PPTX file
+    }
+
+    displayConers() {
+        //TODO display corners after receive from server
+    }
+}
+
+class Detections {
+    //TODO follow class at server size
+}
+class StepsNavigator {
+    static TOTAL_STEPS = 4;
+    static currentStep = 0;
+
+    static nextStep() {
+        //TODO process UI for next step
+    }
+
+    static previousStep() {
+        //TODO prcess UI for previous step
+    }
+}
+class Util {
+    static lockScreen() {
+        //TODO lockScreen and display loading
+    }
+
+    static releaseScreen() {
+        //TODO release screen
+    }
+
 }
