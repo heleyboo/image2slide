@@ -4,7 +4,7 @@
    @include('layout.partials.head')
  </head>
  <body>
-  <div class="wrapper">
+  <div class="wrapper" style="overflow-x: hidden;">
     @include('layout.partials.nav')
 
     <div id="pricing" class="p-top-90 light-gray-bg div_bot3">
