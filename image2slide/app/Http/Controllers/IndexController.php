@@ -25,7 +25,7 @@ class IndexController extends Controller
      */
     public function index() {
         $viewData = [];
-        return view('index', $viewData);
+        return view('main', $viewData);
     }
 
 }
