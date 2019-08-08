@@ -3,159 +3,9 @@
 
 <head>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-
-            var navListItems = $('ul.setup-panel li a'),
-                allWells = $('.setup-content');
-
-            allWells.hide();
-
-            navListItems.click(function(e) {
-                e.preventDefault();
-                var $target = $($(this).attr('href')),
-                    $item = $(this).closest('li');
-
-                if (!$item.hasClass('disabled')) {
-                    navListItems.closest('li').removeClass('active');
-                    $item.addClass('active');
-                    allWells.hide();
-                    $target.show();
-                }
-            });
-
-            $('ul.setup-panel li.active a').trigger('click');
-        });
-    </script>
-    <style>
-        body {
-            background-image: url(/images/contents-bg.png);
-        }
-        #footer {
-            background-image: url(/images/footer-bg.png);
-            height: 100px;
-            padding: 20px;
-        }
-        .file-upload {
-        background-color: #ffffff;
-        width: 100%;
-        margin: 0 auto;
-        padding: 20px;
-        }
-
-        .file-upload-btn {
-        width: 100%;
-        margin: 0;
-        color: #fff;
-        background: #1FB264;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #15824B;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-        }
-
-        .file-upload-btn:hover {
-        background: #1AA059;
-        color: #ffffff;
-        transition: all .2s ease;
-        cursor: pointer;
-        }
-
-        .file-upload-btn:active {
-        border: 0;
-        transition: all .2s ease;
-        }
-
-        .file-upload-content {
-        display: none;
-        text-align: center;
-        }
-
-        .file-upload-input {
-        position: absolute;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        outline: none;
-        opacity: 0;
-        cursor: pointer;
-        }
-
-        .image-upload-wrap {
-        margin-top: 20px;
-        border: 4px dashed #1FB264;
-        position: relative;
-        }
-
-        .image-dropping,
-        .image-upload-wrap:hover {
-        background-color: #1FB264;
-        border: 4px dashed #ffffff;
-        }
-
-        .image-title-wrap {
-        padding: 0 15px 15px 15px;
-        color: #222;
-        }
-
-        .drag-text {
-        text-align: center;
-        }
-
-        .drag-text h3 {
-        font-weight: 100;
-        text-transform: uppercase;
-        color: #15824B;
-        padding: 60px 0;
-        }
-
-        .file-upload-image {
-        max-height: 200px;
-        max-width: 200px;
-        margin: auto;
-        padding: 20px;
-        }
-
-        .remove-image {
-        width: 200px;
-        margin: 0;
-        color: #fff;
-        background: #cd4535;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        border-bottom: 4px solid #b02818;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-        }
-
-        .remove-image:hover {
-        background: #c13b2a;
-        color: #ffffff;
-        transition: all .2s ease;
-        cursor: pointer;
-        }
-
-        .remove-image:active {
-        border: 0;
-        transition: all .2s ease;
-        }
-        .navbar.navbar-default {
-            background-color: #333333;
-        }
-        #btn-steps {
-            margin-top: 20px;
-        }
-    </style>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="{{ asset('css/main.css') }}" rel="stylesheet" id="common-css">
 </head>
 
 <body>
@@ -180,17 +30,179 @@
                         <li><a href="#">Contact</a></li>
                     </ul>
                 </div>
-
             </div>
-
         </nav>
 
         <div class="container-fluid">
-            @yield('content')
+            <div class="form-group">
+                <div class="col-xs-12">
+                    <ul class="nav nav-pills nav-justified thumbnail setup-panel">
+                        <li class="active">
+                            <a href="#step-1">
+                                <h4 class="list-group-item-heading">Step 1</h4>
+                                <p class="list-group-item-text">Upload image</p>
+                            </a>
+                        </li>
+                        <li class="disabled">
+                            <a href="#step-2">
+                                <h4 class="list-group-item-heading">Step 2</h4>
+                                <p class="list-group-item-text">Show and adjust board corners</p>
+                            </a>
+                        </li>
+                        <li class="disabled">
+                            <a href="#step-3">
+                                <h4 class="list-group-item-heading">Step 3</h4>
+                                <p class="list-group-item-text">Show and adjust detection result</p>
+                            </a>
+                        </li>
+                        <li class="disabled">
+                            <a href="#step-4">
+                                <h4 class="list-group-item-heading">Step 4</h4>
+                                <p class="list-group-item-text">Generate and download PPTX file</p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-12 col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-body" style="height: 100%;">
+                        <div class="col-md-2 col-xs-12">
+                            <div class="well">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle btn-block" type="button" data-toggle="dropdown">Add auto shap
+                                        <span class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">Rectangle</a></li>
+                                        <li><a href="#">Triangle</a></li>
+                                        <li><a href="#">Circle</a></li>
+                                        <li><a href="#">Smiley Face</a></li>
+                                        <li><a href="#">Cylinder</a></li>
+                                        <li><a href="#">Block Arrow</a></li>
+                                        <li><a href="#">Star</a></li>
+                                        <li><a href="#">Line Arrow</a></li>
+                                        <li><a href="#">Cloud</a></li>
+                                        <li><a href="#">Computer</a></li>
+                                        <li><a href="#">Human</a></li>
+                                        <li><a href="#">Wifi</a></li>
+                                    </ul>
+                                </div>
+                                <br />
+                                <button class="btn btn-primary btn-block" type="button">Add line</button>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-xs-12">
+                            <div class="row setup-content" id="step-1">
+                                <div class="col-xs-12">
+                                    <div class="well text-center" style="height: 400px;">
+                                        <div class="file-upload">
+                                            <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add Image</button>
+
+                                            <div class="image-upload-wrap">
+                                                <input class="file-upload-input" type="file" accept="image/*">
+                                                <div class="drag-text">
+                                                    <h3>Drag and drop a file or select add Image</h3>
+                                                </div>
+                                            </div>
+                                            <div class="file-upload-content">
+                                                <img class="file-upload-image" src="#" alt="your image">
+                                                <div class="image-title-wrap">
+                                                    <button type="button" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" id="btn-steps">
+                                            <div class="col-md-12 col-xs-12">
+                                                <button class="btn btn-default pull-left">Back to previous step</button>
+                                                <button class="btn btn-success pull-right">Next step</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row setup-content" id="step-2">
+                                <div class="col-xs-12">
+                                    <div class="col-md-12 well">
+                                        <h1 class="text-center"> STEP 2</h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row setup-content" id="step-3">
+                                <div class="col-xs-12">
+                                    <div class="col-md-12 well">
+                                        <h1 class="text-center"> STEP 3</h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row setup-content" id="step-4">
+                                <div class="col-xs-12">
+                                    <div class="col-md-12 well">
+                                        <h1 class="text-center"> STEP 4</h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-xs-12">
+                            <div class="well">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="class-type">Category:</label>
+                                        <select name="class-type" id="class-type" class="form-control" autocomplete="off">
+                                            <option>Autoshape</option>
+                                            <option>Mark</option>
+                                            <option>Line</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="shap-type">Shap Type:</label>
+                                        <select name="shap-type" id="shape-type" class="form-control" autocomplete="off">
+                                            <option>Rectangle</option>
+                                            <option>Triangle</option>
+                                            <option>Circle</option>
+                                            <option>Smiley Face</option>
+                                            <option>Cylinder</option>
+                                            <option>Block Arrow</option>
+                                            <option>Star</option>
+                                            <option>Line Arrow</option>
+                                            <option>Cloud</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6 col-lg-6 col-xs-12">
+                                                <label for="xmin">Xmin:</label>
+                                                <input type="number" class="form-control" id="xmin">
+                                            </div>
+                                            <div class="col-md-6 col-lg-6 col-xs-12">
+                                                <label for="xmax">Xmax:</label>
+                                                <input type="number" class="form-control" id="xmax">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6 col-lg-6 col-xs-12">
+                                                <label for="ymin">Ymin:</label>
+                                                <input type="number" class="form-control" id="ymin">
+                                            </div>
+                                            <div class="col-md-6 col-lg-6 col-xs-12">
+                                                <label for="ymax">Ymax:</label>
+                                                <input type="number" class="form-control" id="ymax">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success btn-block">Save</button>
+                                    <button type="submit" class="btn btn-warning btn-block">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="container-fluid" id="footer">
             <div class="">
-                <p class="text-center"> ©  2014 - 2019 Primagest, Inc. All Rights Reserved. </p>
+                <p class="text-center"> © 2014 - 2019 Primagest, Inc. All Rights Reserved. </p>
             </div>
         </div>
     </div>

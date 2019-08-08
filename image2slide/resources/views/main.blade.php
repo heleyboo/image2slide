@@ -35,7 +35,6 @@
         <div class="panel-body" style="height: 100%;">
             <div class="col-md-2 col-xs-12">
                 <div class="well">
-                    <!-- Dropdown button -->
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle btn-block" type="button" data-toggle="dropdown">Add auto shap
                             <span class="caret"></span></button>
