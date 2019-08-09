@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import './App.css';
 
@@ -9,31 +9,44 @@ import ShapeProperties from './components/shape-properties/shape-properties';
 import DrawPanel from './components/draw-area/draw-panel';
 import Footer from './components/footer/footer';
 
-function App() {
-  return (
-    <div className="container-full">
-        <Navbar/>
-        <div className="container-fluid">
-            <StepNav/>
-            <div className="col-md-12 col-lg-12 col-xs-12">
-                <div className="panel panel-default">
-                    <div className="panel-body">
-                        <div className="col-md-2 col-xs-12">
-                            <Toolbox/>
-                        </div>
-                        <div className="col-md-8 col-xs-12">
-                            <DrawPanel/>
-                        </div>
-                        <div className="col-md-2 col-xs-12">
-                            <ShapeProperties/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <Footer/>
-    </div>
-  );
-}
+export default class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            step: 1
+        }
+    }
 
-export default App;
+    updateStep = (step) => {
+        this.setState({
+            step: step
+        });
+    }
+
+    render() {
+        return (
+          <div className="container-full">
+              <Navbar/>
+              <div className="container-fluid">
+                  <StepNav step={this.state.step} />
+                  <div className="col-md-12 col-lg-12 col-xs-12">
+                      <div className="panel panel-default">
+                          <div className="panel-body">
+                              <div className="col-md-2 col-xs-12">
+                                  <Toolbox/>
+                              </div>
+                              <div className="col-md-8 col-xs-12">
+                                  <DrawPanel updateStep={(step) => this.updateStep(step)}/>
+                              </div>
+                              <div className="col-md-2 col-xs-12">
+                                  <ShapeProperties/>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <Footer/>
+          </div>
+        );
+    }
+}

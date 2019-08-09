@@ -73,21 +73,22 @@ export default class DrawPanel extends React.Component {
         let currentStep = this.state.step;
         currentStep += 1;
         this.setState({ step: currentStep });
+        this.props.updateStep(currentStep);
     }
 
     handleBackPreviousStep = () => {
         let currentStep = this.state.step;
         currentStep -= 1;
         this.setState({ step: currentStep });
+        this.props.updateStep(currentStep);
     }
 
     render() {
         return (
             <div className="row setup-content" id="step-1">
                 <div className="col-xs-12">
+                    <StepController onNext={this.handleNextStep} onPrevious={this.handleBackPreviousStep}/>
                     <div className="well text-center">
-                        {/* <StepController/> */}
-                        <StepController onNext={this.handleNextStep} onPrevious={this.handleBackPreviousStep}/>
                         {this.renderStep(this.state.step)}
                     </div>
                 </div>

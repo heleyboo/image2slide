@@ -7,7 +7,7 @@ export default class PreviewImage extends React.Component {
     }
 
     handleUploadImage = () => {
-
+        
     }
 
     render() {

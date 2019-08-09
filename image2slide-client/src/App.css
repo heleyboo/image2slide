@@ -9,6 +9,7 @@ body {
 .file-upload {
     background-color: #ffffff;
     width: 100%;
+    min-height: 400px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -60,6 +61,7 @@ body {
     margin-top: 20px;
     border: 4px dashed #1FB264;
     position: relative;
+    min-height: 400px;
 }
 
 .image-dropping,
@@ -125,6 +127,11 @@ body {
 }
 
 .image-preview {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.canvas {
     width: 100%;
     margin-top: 10px;
 }

@@ -8,8 +8,6 @@ export default class UploadArea extends React.Component {
     render() {
         return (
             <div className="file-upload">
-                <button className="file-upload-btn" type="button">Add Image</button>
-
                 <div className="image-upload-wrap">
                     <input className="file-upload-input" onChange={(e) => this.props.onFileInputChange(e.target.files)} type="file" accept="image/*" />
                     <div className="drag-text">
