@@ -6,16 +6,16 @@ export default class ShapeProperties extends React.Component {
             <div className="well">
                 <form>
                     <div className="form-group">
-                        <label for="class-type">Category:</label>
-                        <select name="class-type" id="class-type" className="form-control" autocomplete="off">
+                        <label>Category:</label>
+                        <select name="class-type" id="class-type" className="form-control">
                             <option>Autoshape</option>
                             <option>Mark</option>
                             <option>Line</option>
                         </select>
                     </div>
                     <div className="form-group">
-                        <label for="shap-type">Shap Type:</label>
-                        <select name="shap-type" id="shape-type" className="form-control" autocomplete="off">
+                        <label>Shap Type:</label>
+                        <select name="shap-type" id="shape-type" className="form-control">
                             <option>Rectangle</option>
                             <option>Triangle</option>
                             <option>Circle</option>
@@ -30,11 +30,11 @@ export default class ShapeProperties extends React.Component {
                     <div className="form-group">
                         <div className="row">
                             <div className="col-md-6 col-lg-6 col-xs-12">
-                                <label for="xmin">Xmin:</label>
+                                <label>Xmin:</label>
                                 <input type="number" className="form-control" id="xmin" />
                             </div>
                             <div className="col-md-6 col-lg-6 col-xs-12">
-                                <label for="xmax">Xmax:</label>
+                                <label>Xmax:</label>
                                 <input type="number" className="form-control" id="xmax" />
                             </div>
                         </div>
@@ -42,11 +42,11 @@ export default class ShapeProperties extends React.Component {
                     <div className="form-group">
                         <div className="row">
                             <div className="col-md-6 col-lg-6 col-xs-12">
-                                <label for="ymin">Ymin:</label>
+                                <label>Ymin:</label>
                                 <input type="number" className="form-control" id="ymin" />
                             </div>
                             <div className="col-md-6 col-lg-6 col-xs-12">
-                                <label for="ymax">Ymax:</label>
+                                <label>Ymax:</label>
                                 <input type="number" className="form-control" id="ymax" />
                             </div>
                         </div>
