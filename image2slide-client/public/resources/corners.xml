@@ -1,0 +1,36 @@
+<annotation>
+	<filename>1.JPG</filename>
+	<size>
+		<width>4032</width>
+		<height>3024</height>
+		<depth>3</depth>
+	</size>
+	<object>
+		<name>top_left</name>
+		<position>
+			<x>85</x>
+			<y>151</y>
+		</position>
+	</object>
+	<object>
+		<name>top_right</name>
+		<position>
+			<x>3950</x>
+			<y>200</y>
+		</position>
+	</object>
+	<object>
+		<name>bottom_right</name>
+		<position>
+			<x>3885</x>
+			<y>2613</y>
+		</position>
+	</object>
+	<object>
+		<name>bottom_left</name>
+		<position>
+			<x>101</x>
+			<y>2657</y>
+		</position>
+	</object>
+</annotation>
