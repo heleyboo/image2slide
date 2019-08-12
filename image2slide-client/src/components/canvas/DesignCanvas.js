@@ -36,10 +36,10 @@ export default class DesignCanvas extends Component {
         })
         const { width, height } = this.props
         return (
-            <Fragment>
+            <div>
                 <canvas ref={c => (this.c = c)} width={width} height={height} />
                 {this.state.canvas && children}
-            </Fragment>
+            </div>
         )
     }
 }

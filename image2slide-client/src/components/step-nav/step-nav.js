@@ -21,25 +21,25 @@ export default class StepNav extends React.Component {
                 <div className="col-xs-12">
                     <ul className="nav nav-pills nav-justified thumbnail setup-panel">
                         <li className={this.getClassName(1)}>
-                            <a href="#step-1">
+                            <a href="javascript:void(0)">
                                 <h4 className="list-group-item-heading">Step 1</h4>
                                 <p className="list-group-item-text">Upload image</p>
                             </a>
                         </li>
                         <li className={this.getClassName(2)}>
-                            <a href="#step-2">
+                            <a href="javascript:void(0)">
                                 <h4 className="list-group-item-heading">Step 2</h4>
                                 <p className="list-group-item-text">Show and adjust board corners</p>
                             </a>
                         </li>
                         <li className={this.getClassName(3)}>
-                            <a href="#step-3">
+                            <a href="javascript:void(0)">
                                 <h4 className="list-group-item-heading">Step 3</h4>
                                 <p className="list-group-item-text">Show and adjust detection result</p>
                             </a>
                         </li>
                         <li className={this.getClassName(4)}>
-                            <a href="#step-4">
+                            <a href="javascript:void(0)">
                                 <h4 className="list-group-item-heading">Step 4</h4>
                                 <p className="list-group-item-text">Generate and download PPTX file</p>
                             </a>

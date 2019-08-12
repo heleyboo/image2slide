@@ -33,13 +33,13 @@ export default class App extends Component {
                       <div className="panel panel-default">
                           <div className="panel-body">
                               <div className="col-md-2 col-xs-12">
-                                  <Toolbox/>
+                                  <Toolbox step={this.state.step}/>
                               </div>
                               <div className="col-md-8 col-xs-12">
                                   <DrawPanel updateStep={(step) => this.updateStep(step)}/>
                               </div>
                               <div className="col-md-2 col-xs-12">
-                                  <ShapeProperties/>
+                                  <ShapeProperties step={this.state.step}/>
                               </div>
                           </div>
                       </div>

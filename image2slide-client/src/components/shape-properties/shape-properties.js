@@ -2,6 +2,9 @@ import React from 'react';
 
 export default class ShapeProperties extends React.Component {
     render() {
+        if (this.props.step && this.props.step !== 3) {
+            return null
+        }
         return (
             <div className="well">
                 <form>
