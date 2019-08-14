@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Request;
 use App\Services\CornerService;
+use App\Services\ObjectDetectService;
+use App\Models\Corners;
+use App\Models\Detections;
 
 class ImageProcessController extends Controller
 {
@@ -24,30 +26,38 @@ class ImageProcessController extends Controller
      *
      * @return array Json of data
      */
-    public function upload() {
-        $file = Request::file('fileToUpload');
-        $originalName = $file->getClientOriginalName();
-        $newName = time() . $originalName;
-        $file->storeAs(config('appx.UPLOAD_DIRECTORY'), $newName);
+    public function upload()
+    {
+        // $file = Request::file('fileToUpload');
+        // $originalName = $file->getClientOriginalName();
+        // $newName = time() . $originalName;
+        // $file->storeAs(config('appx.UPLOAD_DIRECTORY'), $newName);
         $cornerService = new CornerService();
-        $corners = $cornerService->calculateCorners($newName);
+        $corners = $cornerService->calculateCorners("test");
         $result = array(
-            "fileName" => $newName,
-             "status" => 0,
-             "corners" => $corners
+            "fileName" => "test",
+            "status" => 0,
+            "corners" => $corners
         );
         return $result;
     }
 
-    public function detectObjects() {
+    public function detectObjects()
+    {
         //TODO get updated corners data
         //Call service to get detection objects and preprocess Image
-        return [];
+        $detectService = new ObjectDetectService();
+
+        $detection = $detectService->detectObjects('test', new Corners());
+
+        return json_encode($detection);
     }
 
-    public function getPPTX() {
+    public function getPPTX()
+    {
         //TODO get updated detections data
         //Call service to get PPTX file
-        return [];
+        $detectService = new ObjectDetectService();
+        return $detectService->exportPPTX(new Detections());
     }
 }

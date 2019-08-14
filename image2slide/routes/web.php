@@ -19,14 +19,14 @@ Route::get('/',  [
 Route::post('/upload',  [
     'as'=> 'upload',
     'uses'=> 'ImageProcessController@upload'
-]);
+])->middleware('cors');
 
 Route::post('/detect-objects',  [
     'as'=> 'detectObjects',
     'uses'=> 'ImageProcessController@detectObjects'
-]);
+])->middleware('cors');
 
 Route::post('/get-pptx',  [
     'as'=> 'getPPTX',
     'uses'=> 'ImageProcessController@getPPTX'
-]);
+])->middleware('cors');
