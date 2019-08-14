@@ -6,9 +6,9 @@ export const APP_STEP = {
 };
 
 export const API_SERVER = {
-    UPLOAD_IMAGE: 'http://localhost:8000/upload',
-    DETECT_OBJECTS: 'http://localhost:8000/detect-objects',
-    GET_PPTX: 'http://localhost:8000/get-pptx'
+    UPLOAD_IMAGE: 'http://117.0.39.150:8088/upload',
+    DETECT_OBJECTS: 'http://117.0.39.150:8088/detect-objects',
+    GET_PPTX: 'http://117.0.39.150:8088/get-pptx'
 };
 
 export const OBJECT_NAME = {
