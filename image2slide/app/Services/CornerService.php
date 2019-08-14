@@ -16,11 +16,11 @@ class CornerService
 
         //stub corner
         $corners->setFileName($fileName)
-                ->setSize(new ImageSize(944, 600))
+                ->setSize(new ImageSize(788, 591))
                 ->setTopLeft(new Point(10, 10))
-                ->setTopRight(new Point(940, 10))
-                ->setBottomLeft(new Point(10, 590))
-                ->setBottomRight(new Point(940, 590));
+                ->setTopRight(new Point(788, 10))
+                ->setBottomLeft(new Point(10, 591))
+                ->setBottomRight(new Point(788, 591));
         return $corners;
     }
 }

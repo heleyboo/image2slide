@@ -23,6 +23,7 @@ class ObjectDetectService
     {
         //TODO run AI to get objects list
         $detections = new Detections();
+        $detections->setSize(new ImageSize(800, 600));
         $detectOpbject = new DetectionObject('1', 'rectangle', new BoundingBox(10, 10, 100, 100));
         $detectOpbject1 = new DetectionObject('2', 'rectangle', new BoundingBox(100, 100, 200, 200));
         $start = new Point(100, 100);
