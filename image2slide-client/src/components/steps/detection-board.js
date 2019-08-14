@@ -1,16 +1,43 @@
 import React, { Component } from 'react'
 import DesignCanvas from '../canvas/DesignCanvas'
 import Rect from '../canvas/Rect'
-
+import { OBJECT_NAME } from '../../constants/index'
+import Line from '../canvas/Line';
 export default class DetectionBoard extends Component {
+
+    /**
+     * Render detected objects on canvas
+     * @param {} objects Detected objects
+     */
+    renderDetectedObjects = (objects) => {
+
+        if (objects && objects.length > 0) {
+            return objects.map((object) => {
+                let data = object.data
+                console.log(object)
+                switch(object.name) {
+                    case OBJECT_NAME.LINE:
+                        return <Line key={object.id} startPoint={data.start} endPoint={data.end} />
+                    default:
+                        return <Rect key={object.id} detectionObject={object} strokeWidth={2} />
+                }
+            });
+        }
+    }
+
+    //
+    renderObject = (object) => {
+        if (object.name === OBJECT_NAME.LINE) {
+            return <Line/>
+        } else {
+            return <Rect detectionObject={object} strokeWidth={2} />
+        }
+    }
+    
     render() {
         return (
             <DesignCanvas imageSource={this.props.imageSource}>
-                <Rect width={100} height={100} stroke="red" strokeWidth={2} />
-                <Rect width={100} height={100} stroke="red" strokeWidth={2} />
-                <Rect width={100} height={100} stroke="blue" strokeWidth={2} />
-                <Rect width={100} height={100} stroke="green" strokeWidth={2} />
-                <Rect width={100} height={100} stroke="orange" strokeWidth={2} />
+                { this.renderDetectedObjects(this.props.detectedObjets) }
             </DesignCanvas>
         );
     }

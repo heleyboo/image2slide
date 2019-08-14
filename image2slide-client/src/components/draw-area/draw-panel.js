@@ -5,52 +5,58 @@ import PreviewImage from '../steps/preview-image';
 import StepController from '../steps/step-controller';
 import CornerBoard from '../steps/corner-board';
 import DetectionBoard from '../steps/detection-board';
-
+import { async } from 'q';
+import { APP_STEP, API_SERVER } from '../../constants/index';
+import AIService from '../../services/aiservices';
+import DownpptxBoard from '../steps/downpptx-board';
 export default class DrawPanel extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             step: 1,
-            preview: false,
-            imageSrc: ''
+            isSelectedImage: false,
+            loading: false,
+            topLeft: null,
+            topRight: null,
+            bottomLeft: null,
+            bottomRight: null,
+            detectedObjets: null,
+            width: 800,
+            height: 600,
+            imageSrc: '',
+            linkDownloadPPTX: ''
         };
     }
 
     handleChange = (files) => {
-        console.log(files);
         let reader = new FileReader();
 
         let _self = this;
         reader.onload = function(e) {
             _self.setState({
                 imageSrc: e.target.result,
-                preview: true
+                isSelectedImage: true
             });
         }
           
         reader.readAsDataURL(files[0]);
     }
 
-    handleDeleteImage = () => {
-        this.setState({ preview: false });
-    }
-
     renderStep = (step) => {
-        console.log(step);
         switch(step) {
-            case 1: return this.renderUploadPanel(); break;
-            case 2: return this.renderCornerBoard(); break;
-            case 3: return this.renderDetectionBoard(); break;
-            case 4: return this.renderPPTDownloadBoard(); break;
+            case APP_STEP.UPLOAD_IMAGE: return this.renderUploadPanel(); break;
+            case APP_STEP.DETECT_CORNERS: return this.renderCornerBoard(); break;
+            case APP_STEP.DETECT_OBJECTS: return this.renderDetectionBoard(); break;
+            case APP_STEP.DOWNLOAD_PPT: return this.renderPPTDownloadBoard(); break;
         }
     }
 
     renderUploadPanel = () => {
-        const isPreview = this.state.preview;
+        const isSelectedImage = this.state.isSelectedImage;
         let step;
-        if (isPreview) {
-            step = <PreviewImage imageSource={this.state.imageSrc} onDeleteImage={this.handleDeleteImage} />;
+        if (isSelectedImage) {
+            step = <PreviewImage imageSource={this.state.imageSrc} />;
         } else {
             step = <UploadArea onFileInputChange={this.handleChange}/>;
         }
@@ -58,26 +64,134 @@ export default class DrawPanel extends React.Component {
     }
 
     renderCornerBoard = () => {
-        return <CornerBoard imageSource={this.state.imageSrc}/>;
+        return (
+            <CornerBoard 
+            topLeft={this.state.topLeft}
+            topRight={this.state.topRight}
+            bottomLeft={this.state.bottomLeft}
+            bottomRight={this.state.bottomRight}
+            imageSource={this.state.imageSrc}
+            width={this.state.width}
+            height={this.state.height}
+            onMovingCorners={(objId, top, left) => this.onMovingCorners(objId, top, left)}
+            />
+        );
     }
 
     renderDetectionBoard = () => {
-        return <DetectionBoard imageSource={this.state.imageSrc}/>
+        return (
+            <DetectionBoard 
+            detectedObjets={this.state.detectedObjets} 
+            imageSource={this.state.imageSrc}
+            />
+        )
     }
 
     renderPPTDownloadBoard = () => {
-        return <></>;
+        return <DownpptxBoard link={this.state.linkDownloadPPTX}/>
     }
 
-    handleNextStep = () => {
+    detectCorners = async() => {
+
+        let uploadData = {
+            method: 'POST',
+            headers: new Headers()
+        }
+
+        let cornersRes = await AIService.detectCorners(uploadData);
+            
+        this.setState({
+            topLeft: cornersRes.corners.topLeft,
+            topRight: cornersRes.corners.topRight,
+            bottomRight: cornersRes.corners.bottomRight,
+            bottomLeft: cornersRes.corners.bottomLeft,
+            height: cornersRes.corners.size.height,
+            width: cornersRes.corners.size.width,
+        });
+    }
+
+    detectObjects = async() => {
+
+        let uploadData = {
+            method: 'POST',
+            headers: new Headers()
+        }
+
+        let detectResult = await AIService.detectObjectcs(uploadData);
+            
+        this.setState({
+            detectedObjets: detectResult.detectionObjects
+        });
+    }
+
+    getPPTX = async() => {
+        let uploadData = {
+            method: 'POST',
+            headers: new Headers()
+        }
+        let getPPTXResult = await AIService.getPPTX(uploadData);
+
+        this.setState({
+            linkDownloadPPTX: getPPTXResult.link
+        });
+    }
+
+    onMovingCorners = (objId, top, left) => {
+        switch (objId) {
+            case 1:
+                this.setState({ topLeft: { x: left, y: top } });
+                break;
+            case 2:
+                this.setState({ topRight: { x: left, y: top } });
+                break;
+            case 3:
+                this.setState({ bottomRight: { x: left, y: top } });
+                break;
+            case 4:
+                this.setState({ bottomLeft: { x: left, y: top } });
+                break;
+        }
+    }
+
+    processNextStep = async(currentStep) => {
+        this.setState({loading: true});
+
+        switch(currentStep) {
+            case APP_STEP.UPLOAD_IMAGE:
+                await this.detectCorners();
+                break;
+            case APP_STEP.DETECT_CORNERS:
+                await this.detectObjects();
+                break;
+            case APP_STEP.DETECT_OBJECTS:
+                await this.getPPTX();
+                break;
+        }
+        
+        let nextStep = currentStep + 1;
+        this.setState({ 
+            step: nextStep,
+            loading: false
+        });
+        this.props.updateStep(nextStep);
+    }
+
+    handleNextStep = async () => {
+        if (!this.state.isSelectedImage) {
+            return alert('Please select an image');
+        }
         let currentStep = this.state.step;
-        currentStep += 1;
-        this.setState({ step: currentStep });
-        this.props.updateStep(currentStep);
+        if (currentStep >= APP_STEP.DOWNLOAD_PPT) {
+            return;
+        }
+        await this.processNextStep(currentStep);
     }
 
     handleBackPreviousStep = () => {
         let currentStep = this.state.step;
+        if (currentStep <= 1) {
+            return;
+        }
         currentStep -= 1;
         this.setState({ step: currentStep });
         this.props.updateStep(currentStep);
@@ -87,7 +201,11 @@ export default class DrawPanel extends React.Component {
         return (
             <div className="row setup-content" id="step-1">
                 <div className="col-xs-12">
-                    <StepController onNext={this.handleNextStep} onPrevious={this.handleBackPreviousStep}/>
+                    <StepController 
+                    onNext={this.handleNextStep} 
+                    onPrevious={this.handleBackPreviousStep}
+                    loading={this.state.loading}
+                    />
                     <div className="well text-center">
                         {this.renderStep(this.state.step)}
                     </div>

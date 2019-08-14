@@ -25,32 +25,30 @@ export default class Line extends Component {
         strokeWidth: 5,
         selectable: false,
         evented: false,
-        strokeDashArray: [5, 5],
+        strokeDashArray: [0, 0],
         originX: 'center',
         originY: 'center'
     }
 
     componentDidMount() {
-        let x1 = this.props.startPoint[0]
-        let y1 = this.props.startPoint[1]
-        let x2 = this.props.endPoint[0]
-        let y2 = this.props.endPoint[1]
+        let x1 = this.props.startPoint.x
+        let y1 = this.props.startPoint.y
+        let x2 = this.props.endPoint.x
+        let y2 = this.props.endPoint.y
         const coords = [x1, y1, x2, y2]
-        
         this.state.line = new fabric.Line(coords, Line.defaultProps)
         this.props.canvas.add(this.state.line)
     }
 
     render() {
-        let x1 = this.props.startPoint[0]
-        let y1 = this.props.startPoint[1]
-        let x2 = this.props.endPoint[0]
-        let y2 = this.props.endPoint[1]
+        let x1 = this.props.startPoint.x
+        let y1 = this.props.startPoint.y
+        let x2 = this.props.endPoint.x
+        let y2 = this.props.endPoint.y
 
         if (this.state.line) {
             this.state.line.set({ 'x2': x2, 'y2': y2 })
             this.state.line.set({ 'x1': x1, 'y1': y1 })
-            //this.props.canvas.renderAll()
         }
 
         return null

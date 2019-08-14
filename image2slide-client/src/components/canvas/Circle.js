@@ -25,12 +25,8 @@ export default class Circle extends Component {
 
     componentDidMount() {
         const circle = new fabric.Circle(this.props)
+        circle.hasControls = circle.hasBorders = false;
         this.props.canvas.add(circle)
-        this.props.canvas.on('object:moving', (e) => {
-            let p = e.target
-            this.props.onMoving(p.id, p.top, p.left);
-            this.props.canvas.renderAll()
-        })
     }
 
     render() {

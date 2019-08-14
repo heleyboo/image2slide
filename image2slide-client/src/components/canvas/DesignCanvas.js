@@ -20,11 +20,21 @@ export default class DesignCanvas extends Component {
 
     componentDidMount() {
         const canvas = new fabric.Canvas(this.c)
+
         canvas.setBackgroundImage(this.props.imageSource, canvas.renderAll.bind(canvas), {
             backgroundImageOpacity: 0.5,
             backgroundImageStretch: false,
             left: 80
         });
+
+        canvas.on('object:moving', (e) => {
+            let p = e.target
+            if (this.props.onMoving) {
+                this.props.onMoving(p.id, p.top, p.left)
+                canvas.renderAll()
+            }
+        })
+
         this.setState({ canvas })
     }
 
