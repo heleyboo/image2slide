@@ -13,6 +13,7 @@ export default class Rect extends React.Component {
         strokeWidth: PropTypes.number.isRequired,
         selectable: PropTypes.bool.isRequired,
         evented: PropTypes.bool.isRequired,
+        key: PropTypes.number.isRequired
     }
 
     static defaultProps = {
@@ -29,10 +30,10 @@ export default class Rect extends React.Component {
         fill: '',
         stroke: 'white',
         strokeWidth: 1,
-        hasControls: false,
-        hasBorders: false,
-        selectable: false,
-        evented: false,
+        hasControls: true,
+        hasBorders: true,
+        selectable: true,
+        evented: true,
     }
 
     getStrokeColorByObjectName(objName) {
@@ -59,6 +60,7 @@ export default class Rect extends React.Component {
             hasBorders: this.props.hasBorders,
             selectable: this.props.selectable,
             evented: this.props.evented,
+            key: this.props.key
         }
         const rect = new fabric.Rect(options)
         this.props.canvas.add(rect)

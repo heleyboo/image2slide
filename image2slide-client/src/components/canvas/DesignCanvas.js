@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 const fabric = window.fabric
@@ -10,7 +10,7 @@ export default class DesignCanvas extends Component {
     }
 
     static defaultProps = {
-        width: 944,
+        width: 788,
         height: 600,
     }
 
@@ -22,9 +22,8 @@ export default class DesignCanvas extends Component {
         const canvas = new fabric.Canvas(this.c)
 
         canvas.setBackgroundImage(this.props.imageSource, canvas.renderAll.bind(canvas), {
-            backgroundImageOpacity: 0.5,
+            backgroundImageOpacity: 1,
             backgroundImageStretch: false,
-            left: 80
         });
 
         canvas.on('object:moving', (e) => {

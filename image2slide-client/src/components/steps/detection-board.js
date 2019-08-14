@@ -12,14 +12,13 @@ export default class DetectionBoard extends Component {
     renderDetectedObjects = (objects) => {
 
         if (objects && objects.length > 0) {
-            return objects.map((object) => {
+            return objects.map((object, index) => {
                 let data = object.data
-                console.log(object)
                 switch(object.name) {
                     case OBJECT_NAME.LINE:
-                        return <Line key={object.id} startPoint={data.start} endPoint={data.end} />
+                        return <Line key={index} startPoint={data.start} endPoint={data.end} />
                     default:
-                        return <Rect key={object.id} detectionObject={object} strokeWidth={2} />
+                        return <Rect key={index} detectionObject={object} strokeWidth={2} />
                 }
             });
         }

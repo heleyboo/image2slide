@@ -6,7 +6,7 @@ import StepController from '../steps/step-controller';
 import CornerBoard from '../steps/corner-board';
 import DetectionBoard from '../steps/detection-board';
 import { async } from 'q';
-import { APP_STEP, API_SERVER } from '../../constants/index';
+import { APP_STEP, CORNERS } from '../../constants/index';
 import AIService from '../../services/aiservices';
 import DownpptxBoard from '../steps/downpptx-board';
 export default class DrawPanel extends React.Component {
@@ -22,10 +22,10 @@ export default class DrawPanel extends React.Component {
             bottomLeft: null,
             bottomRight: null,
             detectedObjets: null,
-            width: 800,
-            height: 600,
+            cornerWidth: 800,
+            cornerHeight: 600,
             imageSrc: '',
-            linkDownloadPPTX: ''
+            linkDownloadPPTX: '',
         };
     }
 
@@ -71,8 +71,8 @@ export default class DrawPanel extends React.Component {
             bottomLeft={this.state.bottomLeft}
             bottomRight={this.state.bottomRight}
             imageSource={this.state.imageSrc}
-            width={this.state.width}
-            height={this.state.height}
+            width={this.state.cornerWidth}
+            height={this.state.cornerHeight}
             onMovingCorners={(objId, top, left) => this.onMovingCorners(objId, top, left)}
             />
         );
@@ -99,28 +99,34 @@ export default class DrawPanel extends React.Component {
         }
 
         let cornersRes = await AIService.detectCorners(uploadData);
+
+        AIService.storeCornerInformation(cornersRes);
+
+        let mainBoardWidth = document.getElementById('main-board').offsetWidth;
+        let canvasWidth = mainBoardWidth - 40;
+        let scale = canvasWidth / cornersRes.corners.size.width;
+
             
         this.setState({
             topLeft: cornersRes.corners.topLeft,
             topRight: cornersRes.corners.topRight,
             bottomRight: cornersRes.corners.bottomRight,
             bottomLeft: cornersRes.corners.bottomLeft,
-            height: cornersRes.corners.size.height,
-            width: cornersRes.corners.size.width,
+            cornerWidth: cornersRes.corners.size.width * scale,
+            cornerHeight: cornersRes.corners.size.height * scale,
         });
     }
 
     detectObjects = async() => {
 
-        let uploadData = {
-            method: 'POST',
-            headers: new Headers()
-        }
+        let uploadData = AIService.getCornersFromStorage();
 
         let detectResult = await AIService.detectObjectcs(uploadData);
-            
+
+        AIService.storeDetectionObjects(detectResult.detectionObjects);
+
         this.setState({
-            detectedObjets: detectResult.detectionObjects
+            detectedObjets: AIService.getDetectionObjectsFromStorage()
         });
     }
 
@@ -139,15 +145,19 @@ export default class DrawPanel extends React.Component {
     onMovingCorners = (objId, top, left) => {
         switch (objId) {
             case 1:
+                AIService.uploadCornerInformation(CORNERS.TOP_LEFT, left, top);
                 this.setState({ topLeft: { x: left, y: top } });
                 break;
             case 2:
+                AIService.uploadCornerInformation(CORNERS.TOP_RIGHT, left, top);
                 this.setState({ topRight: { x: left, y: top } });
                 break;
             case 3:
+                AIService.uploadCornerInformation(CORNERS.BOTTOM_RIGHT, left, top);
                 this.setState({ bottomRight: { x: left, y: top } });
                 break;
             case 4:
+                AIService.uploadCornerInformation(CORNERS.BOTTOM_LEFT, left, top);
                 this.setState({ bottomLeft: { x: left, y: top } });
                 break;
         }
@@ -206,7 +216,7 @@ export default class DrawPanel extends React.Component {
                     onPrevious={this.handleBackPreviousStep}
                     loading={this.state.loading}
                     />
-                    <div className="well text-center">
+                    <div className="well text-center" id="main-board">
                         {this.renderStep(this.state.step)}
                     </div>
                 </div>

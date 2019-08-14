@@ -10,6 +10,8 @@ export default class Circle extends Component {
         left: PropTypes.number.isRequired,
         radius: PropTypes.number.isRequired,
         fill: PropTypes.string.isRequired,
+        hasControls: PropTypes.bool.isRequired,
+        hasBorders: PropTypes.bool.isRequired,
     }
 
     static defaultProps = {
@@ -20,12 +22,13 @@ export default class Circle extends Component {
         fill: 'orange',
         stroke: '#666',
         originX: 'center',
-        originY: 'center'
+        originY: 'center',
+        hasControls: false,
+        hasBorders: false,
     }
 
     componentDidMount() {
         const circle = new fabric.Circle(this.props)
-        circle.hasControls = circle.hasBorders = false;
         this.props.canvas.add(circle)
     }
 

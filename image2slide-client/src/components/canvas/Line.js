@@ -17,6 +17,7 @@ export default class Line extends Component {
         strokeWidth: PropTypes.number.isRequired,
         selectable: PropTypes.bool.isRequired,
         evented: PropTypes.bool.isRequired,
+        key: PropTypes.number.isRequired
     }
 
     static defaultProps = {
