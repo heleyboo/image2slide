@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import DesignCanvas from '../canvas/DesignCanvas'
 import Rect from '../canvas/Rect'
-import { OBJECT_NAME } from '../../constants/index'
+import { OBJECT_NAME, CANVAS_BOARD_TYPE } from '../../constants/index'
 import Line from '../canvas/Line';
 export default class DetectionBoard extends Component {
 
@@ -35,7 +35,12 @@ export default class DetectionBoard extends Component {
     
     render() {
         return (
-            <DesignCanvas imageSource={this.props.imageSource}>
+            <DesignCanvas
+            type={CANVAS_BOARD_TYPE.EDITOR}
+            imageSource={this.props.imageSource}
+            onDrawEnded={this.props.onDrawEnded}
+            drawing={this.props.drawing}
+            >
                 { this.renderDetectedObjects(this.props.detectedObjets) }
             </DesignCanvas>
         );

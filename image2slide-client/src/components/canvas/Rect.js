@@ -13,7 +13,6 @@ export default class Rect extends React.Component {
         strokeWidth: PropTypes.number.isRequired,
         selectable: PropTypes.bool.isRequired,
         evented: PropTypes.bool.isRequired,
-        key: PropTypes.number.isRequired
     }
 
     static defaultProps = {
@@ -63,7 +62,17 @@ export default class Rect extends React.Component {
             key: this.props.key
         }
         const rect = new fabric.Rect(options)
-        this.props.canvas.add(rect)
+        const text = new fabric.Text(this.props.detectionObject.name, {
+            fontSize: 10,
+            top: bndbox.maxY - 12,
+            left: bndbox.minX,
+            textBackgroundColor: strokeColor
+        })
+        const group = new fabric.Group([rect, text], {
+            originX:'center',
+            originY:'center'
+        })
+        this.props.canvas.add(group)
     }
 
     render() {

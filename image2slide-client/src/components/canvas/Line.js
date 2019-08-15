@@ -17,15 +17,14 @@ export default class Line extends Component {
         strokeWidth: PropTypes.number.isRequired,
         selectable: PropTypes.bool.isRequired,
         evented: PropTypes.bool.isRequired,
-        key: PropTypes.number.isRequired
     }
 
     static defaultProps = {
         fill: 'orange',
         stroke: 'red',
-        strokeWidth: 5,
-        selectable: false,
-        evented: false,
+        strokeWidth: 2,
+        selectable: true,
+        evented: true,
         strokeDashArray: [0, 0],
         originX: 'center',
         originY: 'center'

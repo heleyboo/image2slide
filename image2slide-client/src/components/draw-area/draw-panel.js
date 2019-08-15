@@ -6,9 +6,11 @@ import StepController from '../steps/step-controller';
 import CornerBoard from '../steps/corner-board';
 import DetectionBoard from '../steps/detection-board';
 import { async } from 'q';
-import { APP_STEP, CORNERS } from '../../constants/index';
+import { APP_STEP, CORNERS, CORNER_ID } from '../../constants/index';
 import AIService from '../../services/aiservices';
 import DownpptxBoard from '../steps/downpptx-board';
+import Toolbox from '../draw-tools/toolbox';
+import ShapeProperties from '../shape-properties/shape-properties';
 export default class DrawPanel extends React.Component {
 
     constructor(props) {
@@ -26,6 +28,8 @@ export default class DrawPanel extends React.Component {
             cornerHeight: 600,
             imageSrc: '',
             linkDownloadPPTX: '',
+            selectedShapeItem: null,
+            drawing: false
         };
     }
 
@@ -78,11 +82,17 @@ export default class DrawPanel extends React.Component {
         );
     }
 
+    onDrawEnded = () => {
+        this.setState({drawing: false});
+    }
+
     renderDetectionBoard = () => {
         return (
             <DetectionBoard 
-            detectedObjets={this.state.detectedObjets} 
+            detectedObjets={this.state.detectedObjets}
+            onDrawEnded={this.onDrawEnded} 
             imageSource={this.state.imageSrc}
+            drawing={this.state.drawing}
             />
         )
     }
@@ -144,19 +154,19 @@ export default class DrawPanel extends React.Component {
 
     onMovingCorners = (objId, top, left) => {
         switch (objId) {
-            case 1:
+            case CORNER_ID.TOP_LEFT:
                 AIService.uploadCornerInformation(CORNERS.TOP_LEFT, left, top);
                 this.setState({ topLeft: { x: left, y: top } });
                 break;
-            case 2:
+            case CORNER_ID.TOP_RIGHT:
                 AIService.uploadCornerInformation(CORNERS.TOP_RIGHT, left, top);
                 this.setState({ topRight: { x: left, y: top } });
                 break;
-            case 3:
+            case CORNER_ID.BOTTOM_RIGHT:
                 AIService.uploadCornerInformation(CORNERS.BOTTOM_RIGHT, left, top);
                 this.setState({ bottomRight: { x: left, y: top } });
                 break;
-            case 4:
+            case CORNER_ID.BOTTOM_LEFT:
                 AIService.uploadCornerInformation(CORNERS.BOTTOM_LEFT, left, top);
                 this.setState({ bottomLeft: { x: left, y: top } });
                 break;
@@ -209,16 +219,26 @@ export default class DrawPanel extends React.Component {
 
     render() {
         return (
-            <div className="row setup-content" id="step-1">
-                <div className="col-xs-12">
-                    <StepController 
-                    onNext={this.handleNextStep} 
-                    onPrevious={this.handleBackPreviousStep}
-                    loading={this.state.loading}
-                    />
-                    <div className="well text-center" id="main-board">
-                        {this.renderStep(this.state.step)}
+            <div className="panel-body">
+                <div className="col-md-2 col-xs-12">
+                    <Toolbox step={this.state.step} />
+                </div>
+                <div className="col-md-8 col-xs-12">
+                    <div className="row setup-content" id="step-1">
+                    <div className="col-xs-12">
+                        <StepController 
+                        onNext={this.handleNextStep} 
+                        onPrevious={this.handleBackPreviousStep}
+                        loading={this.state.loading}
+                        />
+                        <div className="well text-center" id="main-board">
+                            {this.renderStep(this.state.step)}
+                        </div>
                     </div>
+                    </div>
+                </div>
+                <div className="col-md-2 col-xs-12">
+                    <ShapeProperties step={this.state.step}/>
                 </div>
             </div>
         )
