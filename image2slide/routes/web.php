@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +31,13 @@ Route::post('/get-pptx',  [
     'as'=> 'getPPTX',
     'uses'=> 'ImageProcessController@getPPTX'
 ])->middleware('cors');
+
+Route::get('/api/books', [
+    'as'=> 'books',
+    'uses'=> 'ImageProcessController@getBooks'
+]);
+
+Route::get('/test', [
+    'as' => 'test',
+    'uses' => 'ImageProcessController@test'
+]);

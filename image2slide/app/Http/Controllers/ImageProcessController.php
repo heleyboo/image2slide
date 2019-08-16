@@ -7,6 +7,7 @@ use App\Services\CornerService;
 use App\Services\ObjectDetectService;
 use App\Models\Corners;
 use App\Models\Detections;
+use GuzzleHttp\Client;
 
 class ImageProcessController extends Controller
 {
@@ -59,5 +60,27 @@ class ImageProcessController extends Controller
         //Call service to get PPTX file
         $detectService = new ObjectDetectService();
         return $detectService->exportPPTX(new Detections());
+    }
+
+    public function getBooks() {
+        $detectService = new ObjectDetectService();
+
+        $detection = $detectService->detectObjects('test', new Corners());
+
+        return [$detection];
+    }
+
+    public function test() {
+        $client = new Client();
+        $res = $client->request('GET', 'http://localhost:5000');
+        echo $res->getStatusCode();
+        // "200"
+        echo $res->getHeader('content-type')[0];
+        // 'application/json; charset=utf8'
+        echo $res->getBody();
+
+        exit;
+
+        return $response;
     }
 }
