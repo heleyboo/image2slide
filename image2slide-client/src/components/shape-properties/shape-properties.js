@@ -13,7 +13,6 @@ export default class ShapeProperties extends React.Component {
     }
 
     categoryChanged = (e) => {
-        console.log('category changed');
         this.setState({selectedCatId: e.target.value});
     }
 
