@@ -49,10 +49,10 @@ export default class CornerBoard extends Component {
             height={this.props.height}
             onMoving={(objId, top, left) => this.props.onMovingCorners(objId, top, left)}
             imageSource={this.props.imageSource}>
-                <Line key={1} startPoint={this.props.topLeft} endPoint={this.props.topRight} />
-                <Line key={2} startPoint={this.props.topRight} endPoint={this.props.bottomRight} />
-                <Line key={3} startPoint={this.props.bottomRight} endPoint={this.props.bottomLeft} />
-                <Line key={4} startPoint={this.props.bottomLeft} endPoint={this.props.topLeft} />
+                <Line key={1} name="topLeft" idx="1" startPoint={this.props.topLeft} endPoint={this.props.topRight} />
+                <Line key={2} name="topRight" idx="2" startPoint={this.props.topRight} endPoint={this.props.bottomRight} />
+                <Line key={3} name="bottomRight" idx="3" startPoint={this.props.bottomRight} endPoint={this.props.bottomLeft} />
+                <Line key={4} name="bottomLeft" idx="4" startPoint={this.props.bottomLeft} endPoint={this.props.topLeft} />
                 <Circle id={CORNER_ID.TOP_LEFT} top={this.props.topLeft.y} left={this.props.topLeft.x} />
                 <Circle id={CORNER_ID.TOP_RIGHT} top={this.props.topRight.y} left={this.props.topRight.x} />
                 <Circle id={CORNER_ID.BOTTOM_RIGHT} top={this.props.bottomRight.y} left={this.props.bottomRight.x} />

@@ -7,25 +7,17 @@ const fabric = window.fabric
 export default class Rect extends React.Component {
     static propTypes = {
         canvas: PropTypes.object,
-        detectionObject: PropTypes.object.isRequired,
         fill: PropTypes.string.isRequired,
         stroke: PropTypes.string.isRequired,
         strokeWidth: PropTypes.number.isRequired,
         selectable: PropTypes.bool.isRequired,
         evented: PropTypes.bool.isRequired,
+        name: PropTypes.string.isRequired,
+        idx: PropTypes.string.isRequired,
+        bndbox: PropTypes.object.isRequired
     }
 
     static defaultProps = {
-        detectionObject: {
-            id: 1,
-            name: 'rectangle',
-            bndbox: {
-                minX: 0,
-                maxX: 100,
-                minY: 0,
-                maxY: 100
-            },
-        },
         fill: '',
         stroke: 'white',
         strokeWidth: 1,
@@ -45,8 +37,8 @@ export default class Rect extends React.Component {
     }
 
     componentDidMount() {
-        const bndbox = this.props.detectionObject.data;
-        const strokeColor = this.getStrokeColorByObjectName(this.props.detectionObject.name);
+        const bndbox = this.props.bndbox;
+        const strokeColor = this.getStrokeColorByObjectName(this.props.name);
         const options = {
             top: bndbox.maxY,
             left: bndbox.minX,
@@ -59,10 +51,11 @@ export default class Rect extends React.Component {
             hasBorders: this.props.hasBorders,
             selectable: this.props.selectable,
             evented: this.props.evented,
-            key: this.props.key
+            idx: this.props.idx,
+            name: this.props.name
         }
         const rect = new fabric.Rect(options)
-        const text = new fabric.Text(this.props.detectionObject.name, {
+        const text = new fabric.Text(this.props.name, {
             fontSize: 10,
             top: bndbox.maxY - 12,
             left: bndbox.minX,

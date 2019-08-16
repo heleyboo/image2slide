@@ -1,8 +1,9 @@
 import React from 'react';
+import { APP_STEP } from '../../constants/index';
 
 export default class ShapeProperties extends React.Component {
     render() {
-        if (this.props.step && this.props.step !== 3) {
+        if (this.props.step && this.props.step !== APP_STEP.DETECT_OBJECTS) {
             return null
         }
         return (
@@ -54,8 +55,8 @@ export default class ShapeProperties extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <button type="submit" className="btn btn-success btn-block">Save</button>
-                    <button type="submit" className="btn btn-warning btn-block">Delete</button>
+                    <button onClick={() => this.props.onSave()} className="btn btn-success btn-block">Save</button>
+                    <button onClick={() => this.props.onDelete()} className="btn btn-warning btn-block">Delete</button>
                 </form>
             </div>
         )

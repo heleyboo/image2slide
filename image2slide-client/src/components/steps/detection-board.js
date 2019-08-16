@@ -13,23 +13,14 @@ export default class DetectionBoard extends Component {
 
         if (objects && objects.length > 0) {
             return objects.map((object, index) => {
-                let data = object.data
+                let data = object.data;
                 switch(object.name) {
                     case OBJECT_NAME.LINE:
-                        return <Line key={index} startPoint={data.start} endPoint={data.end} />
+                        return <Line key={index} name={object.name} idx={object.id} startPoint={data.start} endPoint={data.end} />
                     default:
-                        return <Rect key={index} detectionObject={object} strokeWidth={2} />
+                        return <Rect key={index} name={object.name} idx={object.id} bndbox={data} strokeWidth={2} />
                 }
             });
-        }
-    }
-
-    //
-    renderObject = (object) => {
-        if (object.name === OBJECT_NAME.LINE) {
-            return <Line/>
-        } else {
-            return <Rect detectionObject={object} strokeWidth={2} />
         }
     }
     

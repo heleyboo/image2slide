@@ -51,6 +51,8 @@ export default class DesignCanvas extends Component {
             canvas.on('mouse:over', (e) => {
                 if (DrawService.isInDrawingMode()) {
                     canvas.selection = false;
+                } else {
+                    
                 }
             });
         }
@@ -68,9 +70,16 @@ export default class DesignCanvas extends Component {
         this.setState({ canvas })
     }
 
+    handleSelectObject = (e) => {
+        if (e.target) {
+            let selectedObject = e.target;
+            console.log(selectedObject.item(0).get('name'));
+        }
+    }
+
     mousedown = (e) => {
         if (!DrawService.isInDrawingMode()) {
-            return;
+            return this.handleSelectObject(e);
         }
         let mouse = this.state.canvas.getPointer(e);
         this.setState({
