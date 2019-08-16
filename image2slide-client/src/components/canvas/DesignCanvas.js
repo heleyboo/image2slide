@@ -37,6 +37,8 @@ export default class DesignCanvas extends Component {
             backgroundImageStretch: false,
         });
 
+        canvas.selection = false;
+
         if (this.props.type === CANVAS_BOARD_TYPE.EDITOR) {
             canvas.observe('mouse:down', (e) => {
                 this.mousedown(e);
@@ -71,9 +73,8 @@ export default class DesignCanvas extends Component {
     }
 
     handleSelectObject = (e) => {
-        if (e.target) {
-            let selectedObject = e.target;
-            console.log(selectedObject.item(0).get('name'));
+        if (e && e.target && this.props.onObjectSelected) {
+            this.props.onObjectSelected(e.target);
         }
     }
 
@@ -129,7 +130,7 @@ export default class DesignCanvas extends Component {
 
     mousemove = (e) => {
         if (!DrawService.isInDrawingMode()) {
-            return;
+            return this.handleSelectObject(e);
         }
         if(!this.state.started) {
             return false;
@@ -155,9 +156,9 @@ export default class DesignCanvas extends Component {
         this.state.canvas.renderAll(); 
     }
 
-    mouseup = () => {
+    mouseup = (e) => {
         if (!DrawService.isInDrawingMode()) {
-            return;
+            return this.handleSelectObject(e);
         }
         if(this.state.started) {
             this.setState({started: false});
@@ -167,7 +168,6 @@ export default class DesignCanvas extends Component {
     
         this.state.canvas.add(activeObject);
         this.state.canvas.renderAll();
-        //this.state.canvas.selection = true;
         DrawService.setDrawingStatus(DRAWING_MODE.OFF);
     }
 

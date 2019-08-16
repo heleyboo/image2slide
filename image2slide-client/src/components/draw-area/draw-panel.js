@@ -28,7 +28,7 @@ export default class DrawPanel extends React.Component {
             cornerHeight: 600,
             imageSrc: '',
             linkDownloadPPTX: '',
-            selectedShapeItem: null,
+            selectedObject: null,
             drawing: false
         };
     }
@@ -86,6 +86,10 @@ export default class DrawPanel extends React.Component {
         this.setState({drawing: false});
     }
 
+    handleOjectSelection = (object) => {
+        this.setState({selectedObject: object});
+    }
+
     renderDetectionBoard = () => {
         return (
             <DetectionBoard 
@@ -93,6 +97,7 @@ export default class DrawPanel extends React.Component {
             onDrawEnded={this.onDrawEnded} 
             imageSource={this.state.imageSrc}
             drawing={this.state.drawing}
+            onObjectSelected={(object) => this.handleOjectSelection(object)}
             />
         )
     }
@@ -238,7 +243,7 @@ export default class DrawPanel extends React.Component {
                     </div>
                 </div>
                 <div className="col-md-2 col-xs-12">
-                    <ShapeProperties step={this.state.step}/>
+                    <ShapeProperties targetObject={this.state.selectedObject} step={this.state.step}/>
                 </div>
             </div>
         )

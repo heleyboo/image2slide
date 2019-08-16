@@ -31,6 +31,7 @@ export default class DetectionBoard extends Component {
             imageSource={this.props.imageSource}
             onDrawEnded={this.props.onDrawEnded}
             drawing={this.props.drawing}
+            onObjectSelected={(object) => this.props.onObjectSelected(object)}
             >
                 { this.renderDetectedObjects(this.props.detectedObjets) }
             </DesignCanvas>
