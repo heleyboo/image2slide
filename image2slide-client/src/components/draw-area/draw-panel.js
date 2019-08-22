@@ -11,6 +11,7 @@ import AIService from '../../services/aiservices';
 import DownpptxBoard from '../steps/downpptx-board';
 import Toolbox from '../draw-tools/toolbox';
 import ShapeProperties from '../shape-properties/shape-properties';
+import Corners from '../../models/corners';
 export default class DrawPanel extends React.Component {
 
     constructor(props) {
@@ -18,6 +19,7 @@ export default class DrawPanel extends React.Component {
         this.state = {
             step: 1,
             isSelectedImage: false,
+            selectedFile: null,
             loading: false,
             topLeft: null,
             topRight: null,
@@ -29,11 +31,15 @@ export default class DrawPanel extends React.Component {
             imageSrc: '',
             linkDownloadPPTX: '',
             selectedObject: null,
-            drawing: false
+            drawing: false,
+            corners: null
         };
     }
 
     handleChange = (files) => {
+
+        this.setState({selectedFile: files[0]});
+
         let reader = new FileReader();
 
         let _self = this;
@@ -108,37 +114,42 @@ export default class DrawPanel extends React.Component {
 
     detectCorners = async() => {
 
-        let uploadData = {
-            method: 'POST',
-            headers: new Headers()
-        }
+        const formData = new FormData();
+        formData.append('image', this.state.selectedFile);
 
-        let cornersRes = await AIService.detectCorners(uploadData);
+        let cornersRes = await AIService.detectCorners(formData);
 
         AIService.storeCornerInformation(cornersRes);
 
         let mainBoardWidth = document.getElementById('main-board').offsetWidth;
         let canvasWidth = mainBoardWidth - 40;
-        let scale = canvasWidth / cornersRes.corners.size.width;
 
-            
+        let corners = new Corners(canvasWidth, cornersRes.annotation);
+
         this.setState({
-            topLeft: cornersRes.corners.topLeft,
-            topRight: cornersRes.corners.topRight,
-            bottomRight: cornersRes.corners.bottomRight,
-            bottomLeft: cornersRes.corners.bottomLeft,
-            cornerWidth: cornersRes.corners.size.width * scale,
-            cornerHeight: cornersRes.corners.size.height * scale,
+            topLeft: corners.scaledTopLeft,
+            topRight: corners.scaledTopRight,
+            bottomRight: corners.scaledBottomRight,
+            bottomLeft: corners.scaledBottomLeft,
+            cornerWidth: corners.scaledWidth,
+            cornerHeight: corners.scaledHeight,
+            corners: corners
         });
+
     }
 
     detectObjects = async() => {
 
-        let uploadData = AIService.getCornersFromStorage();
+        let uploadData = {
+            corners: this.state.corners,
+            session_id: '4534534534'
+        }
 
         let detectResult = await AIService.detectObjectcs(uploadData);
 
-        AIService.storeDetectionObjects(detectResult.detectionObjects);
+        console.log(detectResult);
+
+        AIService.storeDetectionObjects(detectResult);
 
         this.setState({
             detectedObjets: AIService.getDetectionObjectsFromStorage()

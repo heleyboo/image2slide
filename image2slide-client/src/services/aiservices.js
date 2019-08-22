@@ -6,7 +6,7 @@ export default class AIService {
         let uploadData = {
             method: 'POST',
             headers: new Headers(),
-            body: JSON.stringify(data)
+            body: data
         }
         return await fetch(API_SERVER.UPLOAD_IMAGE, uploadData).then((res) => res.json());
     }
