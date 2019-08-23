@@ -24,13 +24,20 @@ export default class DesignCanvas extends Component {
 
     state = {
         canvas: null,
-        x: 0,
-        y: 0,
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: 0,
         started: false,
     }
 
     componentDidMount() {
-        const canvas = new fabric.Canvas(this.c)
+        const canvas = new fabric.Canvas(this.c, {
+            originX:'left',
+            originY:'bottom'
+        })
+
+        console.log(canvas)
 
         canvas.setBackgroundImage(this.props.imageSource, canvas.renderAll.bind(canvas), {
             backgroundImageOpacity: 1,
@@ -72,6 +79,12 @@ export default class DesignCanvas extends Component {
         this.setState({ canvas })
     }
 
+    onCanvasMousedown(x1, y1, x2, y2) {
+        if (this.props.onCanvasMousedown) {
+            this.props.onCanvasMousedown(x1, y1, x2, y2);
+        }
+    }
+
     handleSelectObject = (e) => {
         if (e && e.target && this.props.onObjectSelected) {
             this.props.onObjectSelected(e.target);
@@ -84,20 +97,22 @@ export default class DesignCanvas extends Component {
         }
         let mouse = this.state.canvas.getPointer(e);
         this.setState({
-            x : mouse.x,
-            y : mouse.y,
+            x1 : mouse.x,
+            y1 : mouse.y,
             started: true
         });
+
+        this.onCanvasMousedown(mouse.x, mouse.y);
 
         let drawItem = DrawService.getDrawItem();
         let object;
 
         if (drawItem && drawItem.id === LINE_ITEM.id) {
             let coords = [
-                this.state.x,
-                this.state.y,
-                this.state.x,
-                this.state.y
+                this.state.x1,
+                this.state.y1,
+                this.state.x2,
+                this.state.y2
             ];
             let defaultLineProps = {
                 fill: 'orange',
@@ -123,7 +138,7 @@ export default class DesignCanvas extends Component {
         }
         if (object) {
             this.state.canvas.add(object);
-            this.state.canvas.renderAll();
+            //this.state.canvas.renderAll();
             this.state.canvas.setActiveObject(object);
         }
     }
@@ -138,8 +153,8 @@ export default class DesignCanvas extends Component {
     
         let mouse = this.state.canvas.getPointer(e);
     
-        let w = Math.abs(mouse.x - this.state.x);
-        let h = Math.abs(mouse.y - this.state.y);
+        let w = Math.abs(mouse.x - this.state.x1);
+        let h = Math.abs(mouse.y - this.state.y1);
     
         if (!w || !h) {
             return false;
@@ -165,10 +180,17 @@ export default class DesignCanvas extends Component {
         }
     
         let activeObject = this.state.canvas.getActiveObject();
+        this.state.canvas.remove(activeObject);
     
-        this.state.canvas.add(activeObject);
+        // this.state.canvas.add(activeObject);
         this.state.canvas.renderAll();
+        let mouse = this.state.canvas.getPointer(e);
+        this.setState({
+            x2 : mouse.x,
+            y2 : mouse.y,
+        });
         DrawService.setDrawingStatus(DRAWING_MODE.OFF);
+        this.onCanvasMousedown(this.state.x1, this.state.y1, this.state.x2, this.state.y2);
     }
 
     render() {

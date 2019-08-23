@@ -6,13 +6,19 @@ import StepController from '../steps/step-controller';
 import CornerBoard from '../steps/corner-board';
 import DetectionBoard from '../steps/detection-board';
 import { async } from 'q';
-import { APP_STEP, CORNERS, CORNER_ID } from '../../constants/index';
+import { APP_STEP, LINE_ITEM, CORNER_ID } from '../../constants/index';
 import AIService from '../../services/aiservices';
 import DownpptxBoard from '../steps/downpptx-board';
 import Toolbox from '../draw-tools/toolbox';
 import ShapeProperties from '../shape-properties/shape-properties';
 import Corners from '../../models/corners';
 import Detection from '../../models/detection';
+import StorageService from '../../services/storageservice';
+import DrawService from '../../services/drawservice';
+import Rect from '../../models/rect';
+import BndBox from '../../models/bndbox';
+import Line from '../../models/line';
+import Position from '../../models/position';
 export default class DrawPanel extends React.Component {
 
     constructor(props) {
@@ -33,7 +39,8 @@ export default class DrawPanel extends React.Component {
             linkDownloadPPTX: '',
             selectedObject: null,
             drawing: false,
-            corners: null
+            corners: null,
+            detection: null
         };
     }
 
@@ -97,14 +104,35 @@ export default class DrawPanel extends React.Component {
         this.setState({selectedObject: object});
     }
 
+    handleCanvasMousedown = (x1, y1, x2, y2) => {
+        let item = DrawService.getDrawItem();
+        let detection = this.state.detection;
+        if (detection instanceof Detection) {
+            let obj = null;
+            if (item.name === LINE_ITEM.name) {
+                obj = new Line(null, item.name, new Position(x1, y1, x2, y2));
+            } else {
+                const xmin = Math.min(x1, x2);
+                const xmax = Math.max(x1, x2);
+                const ymin = Math.min(y1, y2) - Math.abs(y1-y2);
+                const ymax = Math.max(y1, y2) - Math.abs(y1-y2);
+                obj = new Rect(null, item.name, new BndBox(xmin, ymin, xmax, ymax));
+            }
+            detection.addOject(obj);
+            this.setState({detection: detection});
+        }
+    }
+
     renderDetectionBoard = () => {
         return (
             <DetectionBoard 
             detectedObjets={this.state.detectedObjets}
-            onDrawEnded={this.onDrawEnded} 
+            data={this.state.detection}
+            onDrawEnded={this.onDrawEnded}
             imageSource={this.state.imageSrc}
             drawing={this.state.drawing}
             onObjectSelected={(object) => this.handleOjectSelection(object)}
+            onCanvasMousedown={(x1, y1, x2, y2) => this.handleCanvasMousedown(x1, y1, x2, y2)}
             />
         )
     }
@@ -142,8 +170,13 @@ export default class DrawPanel extends React.Component {
     detectObjects = async() => {
 
         let uploadData = {
-            corners: this.state.corners,
-            session_id: '4534534534'
+            corners: {
+                topLeft: this.state.topLeft,
+                topRight: this.state.topRight,
+                bottomLeft: this.state.bottomLeft,
+                bottomRight: this.state.bottomRight
+            },
+            session_id: StorageService.getItem(StorageService.KEY.SESSION_ID)
         }
 
         let detectResult = await AIService.detectObjectcs(uploadData);
@@ -151,41 +184,36 @@ export default class DrawPanel extends React.Component {
         let mainBoardWidth = document.getElementById('main-board').offsetWidth;
         let canvasWidth = mainBoardWidth - 40;
         let detection = new Detection(canvasWidth, detectResult.annotation);
-        console.log(detection);
 
         this.setState({
-            detectedObjets: []
+            detectedObjets: [],
+            detection: detection
         });
     }
 
-    getPPTX = async() => {
+    getProcessedResult = async() => {
         let uploadData = {
-            method: 'POST',
-            headers: new Headers()
+            session_id: StorageService.getItem(StorageService.KEY.SESSION_ID)
         }
-        let getPPTXResult = await AIService.getPPTX(uploadData);
+        let result = await AIService.getProcessedResult(uploadData);
 
         this.setState({
-            linkDownloadPPTX: getPPTXResult.link
+            linkDownloadPPTX: result.pptx
         });
     }
 
     onMovingCorners = (objId, top, left) => {
         switch (objId) {
             case CORNER_ID.TOP_LEFT:
-                AIService.uploadCornerInformation(CORNERS.TOP_LEFT, left, top);
                 this.setState({ topLeft: { x: left, y: top } });
                 break;
             case CORNER_ID.TOP_RIGHT:
-                AIService.uploadCornerInformation(CORNERS.TOP_RIGHT, left, top);
                 this.setState({ topRight: { x: left, y: top } });
                 break;
             case CORNER_ID.BOTTOM_RIGHT:
-                AIService.uploadCornerInformation(CORNERS.BOTTOM_RIGHT, left, top);
                 this.setState({ bottomRight: { x: left, y: top } });
                 break;
             case CORNER_ID.BOTTOM_LEFT:
-                AIService.uploadCornerInformation(CORNERS.BOTTOM_LEFT, left, top);
                 this.setState({ bottomLeft: { x: left, y: top } });
                 break;
         }
@@ -202,7 +230,7 @@ export default class DrawPanel extends React.Component {
                 await this.detectObjects();
                 break;
             case APP_STEP.DETECT_OBJECTS:
-                await this.getPPTX();
+                await this.getProcessedResult();
                 break;
         }
         
@@ -244,14 +272,14 @@ export default class DrawPanel extends React.Component {
                 <div className="col-md-8 col-xs-12">
                     <div className="row setup-content" id="step-1">
                     <div className="col-xs-12">
+                        <div className="well text-center" id="main-board">
+                            {this.renderStep(this.state.step)}
+                        </div>
                         <StepController 
                         onNext={this.handleNextStep} 
                         onPrevious={this.handleBackPreviousStep}
                         loading={this.state.loading}
                         />
-                        <div className="well text-center" id="main-board">
-                            {this.renderStep(this.state.step)}
-                        </div>
                     </div>
                     </div>
                 </div>

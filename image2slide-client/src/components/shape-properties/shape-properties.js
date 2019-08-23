@@ -23,7 +23,6 @@ export default class ShapeProperties extends React.Component {
     renderShapeType = (catId) => {
         let subItems = [];
         catId = parseInt(catId);
-        console.log(catId);
 
         switch(catId) {
             case SHAPE_CATEGORY.AUTO_SHAPE.id:
@@ -36,7 +35,6 @@ export default class ShapeProperties extends React.Component {
                 break;
         }
 
-        console.log(subItems);
 
         return subItems.map((item) => (
             <option key={item.id} value={item.id}>{item.displayText}</option>

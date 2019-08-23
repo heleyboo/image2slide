@@ -14,7 +14,7 @@ export default class Navbar extends React.Component {
                             <span className="icon-bar"></span>
                         </button>
                         <a className="navbar-brand" href="https://www.primagest.co.jp">
-                            <img src={logo} />
+                            <img style={{height: 16}} src={logo} />
                         </a>
                     </div>
                     <div id="navbar1" className="navbar-collapse collapse">

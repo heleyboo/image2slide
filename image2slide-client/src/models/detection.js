@@ -3,13 +3,15 @@ import Line from './line';
 import Position from './position';
 import Rect from './rect';
 import BndBox from './bndbox';
+import OnboardObject from './onboardobject';
 
 export default class Detection {
     constructor(canvasWidth, annotation) {
         this._scale = annotation.size && annotation.size.width ? canvasWidth / parseFloat(annotation.size.width) : 1;
         this._width = parseFloat(annotation.size.width) * this._scale;
         this._height = parseFloat(annotation.size.height) * this._scale;
-        this._objects = this.parseObjects(annotation);
+        this._onBoardObjects = this.parseObjects(annotation);
+        this._maxid = 0;
     }
 
     parseObjects(annotation) {
@@ -19,6 +21,9 @@ export default class Detection {
     }
 
     parseOnboardObject(object) {
+        if (object['@idx'] > this._maxid) {
+            this._maxid = object['@idx'];
+        }
         if (object.name === LINE_ITEM.name) {
             let xstart = parseFloat(object.position.xstart) * this._scale;
             let xend = parseFloat(object.position.xend) * this._scale;
@@ -34,8 +39,16 @@ export default class Detection {
         }
     }
 
+    get onBoardObjects() {
+        return this._onBoardObjects;
+    } 
+
     addOject(object) {
-        this._objects.push(object);
+        if (object instanceof OnboardObject) {
+            this._maxid += 1;
+            object.id = this._maxid;
+            this._onBoardObjects.push(object);
+        }
     }
 
     removeObject(objectId) {

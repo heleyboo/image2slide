@@ -1,8 +1,8 @@
 body {
-    background-image: url(/images/contents-bg.png);
+    background-image: url(https://www.primagest.co.jp/img/contents-bg.png);
 }
 #footer {
-    background-image: url(/images/footer-bg.png);
+    background-image: url(https://www.primagest.co.jp/img/footer-bg.png);
     height: 100px;
     padding: 20px;
 }
@@ -59,14 +59,14 @@ body {
 
 .image-upload-wrap {
     margin-top: 20px;
-    border: 4px dashed #1FB264;
+    border: 4px dashed #8CC3AE;
     position: relative;
     min-height: 400px;
 }
 
 .image-dropping,
 .image-upload-wrap:hover {
-    background-color: #1FB264;
+    background-color: #8CC3AE;
     border: 4px dashed #ffffff;
 }
 
@@ -82,7 +82,7 @@ body {
 .drag-text h3 {
     font-weight: 100;
     text-transform: uppercase;
-    color: #15824B;
+    color: #8CC3AE;
     padding: 60px 0;
 }
 
@@ -119,9 +119,7 @@ body {
     border: 0;
     transition: all .2s ease;
 }
-.navbar.navbar-default {
-    background-color: #333333;
-}
+
 #btn-steps {
     margin-bottom: 20px;
 }
@@ -134,4 +132,25 @@ body {
 .canvas {
     width: 100%;
     margin-top: 10px;
+}
+
+.btn-success {
+    background-color: #8CC3AE;
+}
+
+.btn-success:hover{
+    background-color: #8CC3AE;
+}
+
+.btn-primary {
+    background-color: #5AB0CF;
+}
+
+.btn-primary:hover {
+    background-color: #5AB0CF;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus {
+    color: #fff;
+    background-color:#5AB0CF;
 }

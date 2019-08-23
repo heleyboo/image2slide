@@ -40,10 +40,10 @@ export default class Rect extends React.Component {
         const bndbox = this.props.bndbox;
         const strokeColor = this.getStrokeColorByObjectName(this.props.name);
         const options = {
-            top: bndbox.maxY,
-            left: bndbox.minX,
-            width: bndbox.maxX - bndbox.minX,
-            height: bndbox.maxY - bndbox.minY,
+            top: bndbox.ymax,
+            left: bndbox.xmin,
+            width: bndbox.xmax - bndbox.xmin,
+            height: bndbox.ymax - bndbox.ymin,
             fill: this.props.fill,
             stroke: strokeColor,
             strokeWidth: this.props.strokeWidth,
@@ -57,8 +57,8 @@ export default class Rect extends React.Component {
         const rect = new fabric.Rect(options)
         const text = new fabric.Text(this.props.name, {
             fontSize: 10,
-            top: bndbox.maxY - 12,
-            left: bndbox.minX,
+            top: bndbox.ymax - 12,
+            left: bndbox.xmin,
             textBackgroundColor: strokeColor
         })
         const group = new fabric.Group([rect, text], {

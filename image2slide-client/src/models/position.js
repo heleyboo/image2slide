@@ -35,6 +35,6 @@ export default class Position {
     }
 
     set yend(yend) {
-        this._yend = yend; 
+        this._yend = yend;
     }
 }

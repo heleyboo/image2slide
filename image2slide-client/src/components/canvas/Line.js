@@ -34,20 +34,20 @@ export default class Line extends Component {
     }
 
     componentDidMount() {
-        let x1 = this.props.startPoint.x
-        let y1 = this.props.startPoint.y
-        let x2 = this.props.endPoint.x
-        let y2 = this.props.endPoint.y
+        let x1 = this.props.position.xstart
+        let y1 = this.props.position.ystart
+        let x2 = this.props.position.xend
+        let y2 = this.props.position.yend
         const coords = [x1, y1, x2, y2]
         this.state.line = new fabric.Line(coords, this.props)
         this.props.canvas.add(this.state.line)
     }
 
     render() {
-        let x1 = this.props.startPoint.x
-        let y1 = this.props.startPoint.y
-        let x2 = this.props.endPoint.x
-        let y2 = this.props.endPoint.y
+        let x1 = this.props.position.xstart
+        let y1 = this.props.position.ystart
+        let x2 = this.props.position.xend
+        let y2 = this.props.position.yend
 
         if (this.state.line) {
             this.state.line.set({ 'x2': x2, 'y2': y2 })

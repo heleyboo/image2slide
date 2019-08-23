@@ -20,13 +20,13 @@ export default class AIService {
         return await fetch(API_SERVER.DETECT_OBJECTS, uploadData).then((res) => res.json());
     }
 
-    static getPPTX = async(data) => {
+    static getProcessedResult = async(data) => {
         let uploadData = {
             method: 'POST',
             headers: new Headers(),
             body: JSON.stringify(data)
         }
-        return await fetch(API_SERVER.GET_PPTX, uploadData).then((res) => res.json());
+        return await fetch(API_SERVER.GET_PROCESSED_RESULT, uploadData).then((res) => res.json());
     }
 
     static storeCornerInformation = (corners) => {
