@@ -12,6 +12,7 @@ import DownpptxBoard from '../steps/downpptx-board';
 import Toolbox from '../draw-tools/toolbox';
 import ShapeProperties from '../shape-properties/shape-properties';
 import Corners from '../../models/corners';
+import Detection from '../../models/detection';
 export default class DrawPanel extends React.Component {
 
     constructor(props) {
@@ -147,12 +148,13 @@ export default class DrawPanel extends React.Component {
 
         let detectResult = await AIService.detectObjectcs(uploadData);
 
-        console.log(detectResult);
-
-        AIService.storeDetectionObjects(detectResult);
+        let mainBoardWidth = document.getElementById('main-board').offsetWidth;
+        let canvasWidth = mainBoardWidth - 40;
+        let detection = new Detection(canvasWidth, detectResult.annotation);
+        console.log(detection);
 
         this.setState({
-            detectedObjets: AIService.getDetectionObjectsFromStorage()
+            detectedObjets: []
         });
     }
 
