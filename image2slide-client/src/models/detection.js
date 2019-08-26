@@ -11,7 +11,6 @@ export default class Detection {
         this._width = parseFloat(annotation.size.width) * this._scale;
         this._height = parseFloat(annotation.size.height) * this._scale;
         this._onBoardObjects = this.parseObjects(annotation);
-        this._maxid = 0;
     }
 
     parseObjects(annotation) {
@@ -21,9 +20,6 @@ export default class Detection {
     }
 
     parseOnboardObject(object) {
-        if (object['@idx'] > this._maxid) {
-            this._maxid = object['@idx'];
-        }
         if (object.name === LINE_ITEM.name) {
             let xstart = parseFloat(object.position.xstart) * this._scale;
             let xend = parseFloat(object.position.xend) * this._scale;
@@ -39,23 +35,70 @@ export default class Detection {
         }
     }
 
+    getNewObjectId() {
+        let maxId = 0;
+        for (let index = 0; index < this.onBoardObjects.length; index++) {
+            const element = this.onBoardObjects[index];
+            if (element.id && parseInt(element.id) > maxId) {
+                maxId = parseInt(element.id);
+            }
+        }
+        return maxId + 1;
+    }
+
     get onBoardObjects() {
         return this._onBoardObjects;
-    } 
+    }
+
+    set onBoardObjects(objects) {
+        this._onBoardObjects = objects;
+    }
 
     addOject(object) {
         if (object instanceof OnboardObject) {
-            this._maxid += 1;
-            object.id = this._maxid;
             this._onBoardObjects.push(object);
         }
     }
 
     removeObject(objectId) {
-        
+        const tmpArr = this._onBoardObjects.filter(function(ele){
+            if (ele instanceof OnboardObject) {
+                return ele.id != objectId;
+            }
+        });
+
+        this._onBoardObjects = tmpArr;
+        console.log(tmpArr);
     }
 
-    updateObject(objectId) {
+    updateObjectProperties(objectId, newName, xmin, ymin, xmax, ymax) {
+        const selectedObject = this.getObjectById(objectId);
 
+        if (!selectedObject) {
+            return;
+        }
+
+        let newObj;
+
+        if (newName === LINE_ITEM.name) {
+            newObj = new Line(objectId, newName, new Position(xmin, ymin, xmax, ymax));
+        } else {
+            newObj = new Rect(objectId, newName, new BndBox(xmin, ymin, xmax, ymax));
+        }
+
+        this.removeObject(objectId);
+
+        this._onBoardObjects.push(newObj);
+    }
+
+    getObjectById(objectId) {
+        let object = null;
+        for (let index = 0; index < this._onBoardObjects.length; index++) {
+            const element = this._onBoardObjects[index];
+            if (element instanceof OnboardObject && element.id == objectId) {
+                return element;
+            }
+        }
+        return object;
     }
 }

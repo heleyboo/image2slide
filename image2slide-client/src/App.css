@@ -154,3 +154,7 @@ body {
     color: #fff;
     background-color:#5AB0CF;
 }
+
+.thumbnail, .well, .panel {
+    border: 1px solid #666666;
+}

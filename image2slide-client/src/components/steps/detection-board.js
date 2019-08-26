@@ -23,6 +23,12 @@ export default class DetectionBoard extends Component {
             });
         }
     }
+
+    removeActiveObject = (objectId) => {
+        if (this.child) {
+            this.child.removeActiveObject(objectId);
+        }
+    }
     
     render() {
         return (
@@ -31,8 +37,10 @@ export default class DetectionBoard extends Component {
             imageSource={this.props.imageSource}
             onDrawEnded={this.props.onDrawEnded}
             drawing={this.props.drawing}
-            onObjectSelected={(object) => this.props.onObjectSelected(object)}
+            onObjectSelected={(objectId) => this.props.onObjectSelected(objectId)}
             onCanvasMousedown={(x1, y1, x2, y2) => this.props.onCanvasMousedown(x1, y1, x2, y2)}
+            data={this.props.data}
+            ref={instance => { this.child = instance; }}
             >
                 { this.renderDetectedObjects(this.props.data) }
             </DesignCanvas>

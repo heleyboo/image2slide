@@ -55,7 +55,8 @@ export default class Rect extends React.Component {
             name: this.props.name
         }
         const rect = new fabric.Rect(options)
-        const text = new fabric.Text(this.props.name, {
+        const innerText = this.props.name + ":" + this.props.idx;
+        const text = new fabric.Text(innerText, {
             fontSize: 10,
             top: bndbox.ymax - 12,
             left: bndbox.xmin,
@@ -63,7 +64,8 @@ export default class Rect extends React.Component {
         })
         const group = new fabric.Group([rect, text], {
             originX:'center',
-            originY:'center'
+            originY:'center',
+            idx: this.props.idx
         })
         this.props.canvas.add(group)
     }

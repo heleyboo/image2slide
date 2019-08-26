@@ -19,6 +19,9 @@ import Rect from '../../models/rect';
 import BndBox from '../../models/bndbox';
 import Line from '../../models/line';
 import Position from '../../models/position';
+import { file } from '@babel/types';
+import MModal from '../modal';
+import ArrUtils from '../../utils/arrutils';
 export default class DrawPanel extends React.Component {
 
     constructor(props) {
@@ -38,9 +41,16 @@ export default class DrawPanel extends React.Component {
             imageSrc: '',
             linkDownloadPPTX: '',
             selectedObject: null,
+            selectedObjectMinX: 0,
+            selectedObjectMaxX: 0,
+            selectedObjectMinY: 0,
+            selectedObjectMaxY: 0,
             drawing: false,
             corners: null,
-            detection: null
+            detection: null,
+            showModal: false,
+            modalTitle: '',
+            modalContent: ''
         };
     }
 
@@ -50,15 +60,34 @@ export default class DrawPanel extends React.Component {
 
         let reader = new FileReader();
 
-        let _self = this;
-        reader.onload = function(e) {
-            _self.setState({
-                imageSrc: e.target.result,
-                isSelectedImage: true
-            });
+        reader.onload = (e) => {
+            
+            const file = files[0];
+            const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+            if (file && acceptedImageTypes.includes(file['type'])) {
+                this.setState({
+                    imageSrc: e.target.result,
+                    isSelectedImage: true
+                });
+                this.handleNextStep();
+            } else {
+                this.showModal(
+                    'Wrong image type',
+                    'Please input an image.  Accepted image types ["image/gif", "image/jpeg", "image/png"]'
+                )
+            }
         }
           
         reader.readAsDataURL(files[0]);
+        
+    }
+
+    showModal = (title, content) => {
+        this.setState({
+            showModal: true,
+            modalTitle: title,
+            modalContent: content
+        });
     }
 
     renderStep = (step) => {
@@ -100,8 +129,12 @@ export default class DrawPanel extends React.Component {
         this.setState({drawing: false});
     }
 
-    handleOjectSelection = (object) => {
-        this.setState({selectedObject: object});
+    handleOjectSelection = (objectId) => {
+        let detection = this.state.detection;
+        if (detection instanceof Detection) {
+            const selectedObject = detection.getObjectById(objectId);
+            this.setState({selectedObject: selectedObject});
+        }
     }
 
     handleCanvasMousedown = (x1, y1, x2, y2) => {
@@ -109,18 +142,27 @@ export default class DrawPanel extends React.Component {
         let detection = this.state.detection;
         if (detection instanceof Detection) {
             let obj = null;
+            const objId = detection.getNewObjectId().toString();
             if (item.name === LINE_ITEM.name) {
-                obj = new Line(null, item.name, new Position(x1, y1, x2, y2));
+                obj = new Line(objId, item.name, new Position(x1, y1, x2, y2));
             } else {
                 const xmin = Math.min(x1, x2);
                 const xmax = Math.max(x1, x2);
                 const ymin = Math.min(y1, y2) - Math.abs(y1-y2);
                 const ymax = Math.max(y1, y2) - Math.abs(y1-y2);
-                obj = new Rect(null, item.name, new BndBox(xmin, ymin, xmax, ymax));
+                obj = new Rect(objId, item.name, new BndBox(xmin, ymin, xmax, ymax));
             }
             detection.addOject(obj);
             this.setState({detection: detection});
         }
+    }
+
+    onUpdateObject = (objectId, newName, xmin, ymin, xmax, ymax) => {
+
+    }
+
+    onRemoveObject = (objectId) => {
+
     }
 
     renderDetectionBoard = () => {
@@ -131,10 +173,19 @@ export default class DrawPanel extends React.Component {
             onDrawEnded={this.onDrawEnded}
             imageSource={this.state.imageSrc}
             drawing={this.state.drawing}
-            onObjectSelected={(object) => this.handleOjectSelection(object)}
+            onObjectSelected={(objectId) => this.handleOjectSelection(objectId)}
             onCanvasMousedown={(x1, y1, x2, y2) => this.handleCanvasMousedown(x1, y1, x2, y2)}
+            onUpdateObject={(objectId, newName, xmin, ymin, xmax, ymax) => this.onUpdateObject(objectId, newName, xmin, ymin, xmax, ymax)}
+            onRemoveObject={(objectId) => {this.onRemoveObject(objectId)}}
+            ref={instance => { this.child = instance; }}
             />
         )
+    }
+
+    removeActiveObject = (objectId) => {
+        if (this.child) {
+            this.child.removeActiveObject(objectId);
+        }
     }
 
     renderPPTDownloadBoard = () => {
@@ -184,11 +235,39 @@ export default class DrawPanel extends React.Component {
         let mainBoardWidth = document.getElementById('main-board').offsetWidth;
         let canvasWidth = mainBoardWidth - 40;
         let detection = new Detection(canvasWidth, detectResult.annotation);
-
         this.setState({
             detectedObjets: [],
             detection: detection
         });
+    }
+
+    updateProperties = (objectId, newName,  minX, minY, maxX, maxY) => {
+        console.log("Update properties")
+        console.log("ObjectId: " + objectId)
+        console.log("newName: " + newName)
+        console.log("xmin: " + minX)
+        console.log("ymin: " + minY)
+        console.log("xmax: " + maxX)
+        console.log("ymax: " + maxY)
+        let detection = this.state.detection;
+        if (detection instanceof Detection) {
+            detection.updateObjectProperties(objectId, newName, minX, minY, maxX, maxY);
+            this.setState({detection: detection});
+        }
+    }
+
+    deleteObject = (objectId) => {
+        console.log("Delete: " + objectId);
+        let detection = this.state.detection;
+        if (detection instanceof Detection) {
+            const onBoardObjects = detection.onBoardObjects;
+            const newObjects = ArrUtils.removeItemById(objectId, onBoardObjects);
+            console.log(newObjects);
+            detection.onBoardObjects = [];
+            console.log(detection);
+            this.setState({detection: detection});
+            console.log(this.state.detection);
+        }
     }
 
     getProcessedResult = async() => {
@@ -266,6 +345,12 @@ export default class DrawPanel extends React.Component {
     render() {
         return (
             <div className="panel-body">
+                <MModal 
+                show={this.state.showModal}
+                title={this.state.modalTitle}
+                content={this.state.modalContent}
+                onModalClose={() => {this.setState({showModal: false})}}
+                />
                 <div className="col-md-2 col-xs-12">
                     <Toolbox step={this.state.step} />
                 </div>
@@ -284,7 +369,12 @@ export default class DrawPanel extends React.Component {
                     </div>
                 </div>
                 <div className="col-md-2 col-xs-12">
-                    <ShapeProperties targetObject={this.state.selectedObject} step={this.state.step}/>
+                    <ShapeProperties 
+                    targetObject={this.state.selectedObject} 
+                    step={this.state.step}
+                    onSave={(objectId, newName, minX, minY, maxX, maxY) => { this.updateProperties(objectId, newName, minX, minY, maxX, maxY) }}
+                    onDelete={(objectId) => { this.removeActiveObject(objectId)}}
+                    />
                 </div>
             </div>
         )

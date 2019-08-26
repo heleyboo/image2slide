@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { CANVAS_BOARD_TYPE, DRAWING_MODE, LINE_ITEM, FABRIC_OBJECT_TYPE } from '../../constants/index'
 import DrawService from '../../services/drawservice';
+import Rect from '../../models/rect';
 
 const fabric = window.fabric
 
@@ -36,8 +37,6 @@ export default class DesignCanvas extends Component {
             originX:'left',
             originY:'bottom'
         })
-
-        console.log(canvas)
 
         canvas.setBackgroundImage(this.props.imageSource, canvas.renderAll.bind(canvas), {
             backgroundImageOpacity: 1,
@@ -87,7 +86,15 @@ export default class DesignCanvas extends Component {
 
     handleSelectObject = (e) => {
         if (e && e.target && this.props.onObjectSelected) {
-            this.props.onObjectSelected(e.target);
+            console.log(e.target);
+            this.props.onObjectSelected(e.target.get('idx'));
+        }
+    }
+
+    removeActiveObject = (objectId) => {
+        if (this.state.canvas) {
+            let activeObject = this.state.canvas.getActiveObject();
+            this.state.canvas.remove(activeObject);
         }
     }
 
@@ -101,8 +108,6 @@ export default class DesignCanvas extends Component {
             y1 : mouse.y,
             started: true
         });
-
-        this.onCanvasMousedown(mouse.x, mouse.y);
 
         let drawItem = DrawService.getDrawItem();
         let object;
@@ -138,7 +143,6 @@ export default class DesignCanvas extends Component {
         }
         if (object) {
             this.state.canvas.add(object);
-            //this.state.canvas.renderAll();
             this.state.canvas.setActiveObject(object);
         }
     }

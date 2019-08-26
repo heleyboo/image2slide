@@ -8,6 +8,7 @@ export default class AIService {
             headers: new Headers(),
             body: data
         }
+
         return await fetch(API_SERVER.UPLOAD_IMAGE, uploadData).then((res) => res.json());
     }
 
