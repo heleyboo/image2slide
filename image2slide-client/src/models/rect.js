@@ -44,4 +44,14 @@ export default class Rect extends OnboardObject {
             idx: this._id
         });
     }
+
+    toXML() {
+        let xmlContent = `
+            <object idx="${this._id}">
+                <name>${this._name}</name>
+                ${this._bndbox.toXML()}
+            </object>
+        `;
+        return xmlContent;
+    }
 }

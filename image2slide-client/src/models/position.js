@@ -37,4 +37,17 @@ export default class Position {
     set yend(yend) {
         this._yend = yend;
     }
+
+    toXML() {
+        let xmlContent = 
+        `
+            <position>
+                <xstart>${this._xstart}</xstart>
+                <ystart>${this._xend}</ystart>
+                <xend>${this._ystart}</xend>
+                <yend>${this._yend}</yend>
+            </position>
+        `;
+        return xmlContent;
+    }
 }

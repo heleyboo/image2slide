@@ -29,6 +29,12 @@ export default class DetectionBoard extends Component {
             this.child.removeActiveObject(objectId);
         }
     }
+
+    updateActiveObjectProperties = (objectId, name, xMin, yMin, xMax, yMax) => {
+        if (this.child) {
+            this.child.updateObjectProperties(objectId, name, xMin, yMin, xMax, yMax);
+        }
+    }
     
     render() {
         return (

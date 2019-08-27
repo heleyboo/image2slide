@@ -19,15 +19,28 @@ export default class StepController extends Component {
                     </div>
                 </div>
             )
-        } else {
+        }
+
+        if(this.props.result) {
+            const linkDownloadPPTX = this.props.result.pptx;
             return (
                 <div className="row" id="btn-steps">
                     <div className="col-md-12 col-xs-12">
                         <button className="btn btn-default pull-left" onClick={this.props.onPrevious}>Back step</button>
-                        <button className="btn btn-success pull-right" onClick={this.props.onNext}>Next step</button>
+                        <a className="btn btn-success pull-right" href={linkDownloadPPTX} target="_blank" onClick={this.props.onNext}>Dowload PPTX</a>
                     </div>
                 </div>
             )
         }
+
+        return (
+            <div className="row" id="btn-steps">
+                <div className="col-md-12 col-xs-12">
+                    <button className="btn btn-default pull-left" onClick={this.props.onPrevious}>Back step</button>
+                    <button className="btn btn-success pull-right" onClick={this.props.onNext}>Next step</button>
+                </div>
+            </div>
+        )
+        
     }
 }

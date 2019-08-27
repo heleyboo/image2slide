@@ -1,5 +1,6 @@
 export default class Corners {
     constructor(canvasWidth, annotation) {
+        this._filename = annotation.filename;
         this._scale = annotation.size && annotation.size.width ? canvasWidth / parseFloat(annotation.size.width) : 1;
         this._topLeft = this.parseCorners(annotation, 'top_left');
         this._topRight = this.parseCorners(annotation, 'top_right');
@@ -11,6 +12,7 @@ export default class Corners {
         this._scaledBottomRight = this.calculateScaled(this._bottomRight);
         this._width = annotation.size && annotation.size.width ? parseFloat(annotation.size.width) : 0;
         this._height = annotation.size && annotation.size.height ? parseFloat(annotation.size.height) : 0;
+        this._depth = annotation.size && annotation.size.depth ? parseFloat(annotation.size.depth) : 0;
         this._scaledWidth = this._width * this._scale;
         this._scaledHeight = this._height * this._scale;
     }
@@ -109,6 +111,48 @@ export default class Corners {
     set bottomRight(newbottomRight) {
         this._bottomRight.x = newbottomRight.x / this._scale;
         this._bottomRight.y = newbottomRight.y / this._scale
+    }
+
+    toXML() {
+        let xmlContent = 
+            `<annotation>
+                <filename>${this._filename}</filename>
+                <size>
+                    <width>${this._width}</width>
+                    <height>${this._height}</height>
+                    <depth>${this._depth}</depth>
+                </size>
+                <object>
+                    <name>top_left</name>
+                    <position>
+                        <x>${this._topLeft.x}</x>
+                        <y>${this._topLeft.y}</y>
+                    </position>
+                </object>
+                <object>
+                    <name>top_right</name>
+                    <position>
+                        <x>${this._topRight.x}</x>
+                        <y>${this._topRight.y}</y>
+                    </position>
+                </object>
+                <object>
+                    <name>bottom_right</name>
+                    <position>
+                        <x>${this._bottomRight.x}</x>
+                        <y>${this._bottomRight.y}</y>
+                    </position>
+                </object>
+                <object>
+                    <name>bottom_left</name>
+                    <position>
+                        <x>${this._bottomLeft.x}</x>
+                        <y>${this._bottomLeft.y}</y>
+                    </position>
+                </object>
+            </annotation>
+            `
+        return xmlContent;
     }
 
 }

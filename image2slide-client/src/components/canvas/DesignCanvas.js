@@ -18,7 +18,7 @@ export default class DesignCanvas extends Component {
     }
 
     static defaultProps = {
-        width: 788,
+        width: 800,
         height: 600,
         drawing: false
     }
@@ -86,7 +86,6 @@ export default class DesignCanvas extends Component {
 
     handleSelectObject = (e) => {
         if (e && e.target && this.props.onObjectSelected) {
-            console.log(e.target);
             this.props.onObjectSelected(e.target.get('idx'));
         }
     }
@@ -95,6 +94,25 @@ export default class DesignCanvas extends Component {
         if (this.state.canvas) {
             let activeObject = this.state.canvas.getActiveObject();
             this.state.canvas.remove(activeObject);
+        }
+    }
+
+    updateObjectProperties = (objectId, name, xMin, yMin, xMax, yMax) => {
+        console.log("Saved");
+        if (this.state.canvas) {
+            const w = Math.abs(xMax - xMin);
+            const h = Math.abs(yMax - yMin);
+            let activeObject = this.state.canvas.getActiveObject();
+            console.log(activeObject);
+            if (activeObject.get('type') === FABRIC_OBJECT_TYPE.GROUP) {
+                let rect = activeObject.item(0);
+                rect.set('width', w).set('height', h);
+            }
+            if (activeObject.get('type') === FABRIC_OBJECT_TYPE.LINE) {
+                activeObject.set({ 'x1': xMin, 'y1': yMin });
+                activeObject.set({ 'x2': xMax, 'y2': yMax });
+            }
+            this.state.canvas.renderAll();
         }
     }
 
@@ -172,7 +190,7 @@ export default class DesignCanvas extends Component {
             activeObject.set({ 'x2': mouse.x, 'y2': mouse.y });
         }
 
-        this.state.canvas.renderAll(); 
+        this.state.canvas.renderAll();
     }
 
     mouseup = (e) => {
@@ -186,7 +204,6 @@ export default class DesignCanvas extends Component {
         let activeObject = this.state.canvas.getActiveObject();
         this.state.canvas.remove(activeObject);
     
-        // this.state.canvas.add(activeObject);
         this.state.canvas.renderAll();
         let mouse = this.state.canvas.getPointer(e);
         this.setState({

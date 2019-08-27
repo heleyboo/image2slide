@@ -3,7 +3,7 @@ import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-export default class DownpptxBoard extends Component {
+export default class ProcessedResultBoard extends Component {
 
     state = {
         numPages: null,
@@ -16,16 +16,16 @@ export default class DownpptxBoard extends Component {
 
     render() {
         const { pageNumber, numPages } = this.state;
+        const linkPdf = this.props.result ? this.props.result.pdf : '';
 
         return (
             <div id="download-board">
                 <Document
-                    file="http://localhost:3000/test.pdf"
+                    file={linkPdf}
                     onLoadSuccess={this.onDocumentLoadSuccess}
                 >
                     <Page pageNumber={pageNumber} />
                 </Document>
-                <a href='' className="btn btn-danger">Click to download file PPTX</a>
             </div>
         )
     }

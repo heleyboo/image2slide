@@ -13,4 +13,14 @@ export default class Line extends OnboardObject {
     set position(position) {
         this._position = position;
     }
+
+    toXML() {
+        let xmlContent = `
+            <object idx="${this._id}">
+                <name>${this._name}</name>
+                ${this._position.toXML()}
+            </object>
+        `;
+        return xmlContent;
+    }
 }

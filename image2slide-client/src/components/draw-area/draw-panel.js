@@ -8,7 +8,6 @@ import DetectionBoard from '../steps/detection-board';
 import { async } from 'q';
 import { APP_STEP, LINE_ITEM, CORNER_ID } from '../../constants/index';
 import AIService from '../../services/aiservices';
-import DownpptxBoard from '../steps/downpptx-board';
 import Toolbox from '../draw-tools/toolbox';
 import ShapeProperties from '../shape-properties/shape-properties';
 import Corners from '../../models/corners';
@@ -22,6 +21,7 @@ import Position from '../../models/position';
 import { file } from '@babel/types';
 import MModal from '../modal';
 import ArrUtils from '../../utils/arrutils';
+import ProcessedResultBoard from '../steps/processed-result-board';
 export default class DrawPanel extends React.Component {
 
     constructor(props) {
@@ -39,7 +39,7 @@ export default class DrawPanel extends React.Component {
             cornerWidth: 800,
             cornerHeight: 600,
             imageSrc: '',
-            linkDownloadPPTX: '',
+            processedResult: null,
             selectedObject: null,
             selectedObjectMinX: 0,
             selectedObjectMaxX: 0,
@@ -188,8 +188,14 @@ export default class DrawPanel extends React.Component {
         }
     }
 
+    updateActiveObjectProperties = (objectId, name, xMin, yMin, xMax, yMax) => {
+        if (this.child) {
+            this.child.updateActiveObjectProperties(objectId, name, xMin, yMin, xMax, yMax);
+        }
+    }
+
     renderPPTDownloadBoard = () => {
-        return <DownpptxBoard link={this.state.linkDownloadPPTX}/>
+        return <ProcessedResultBoard result={this.state.processedResult}/>
     }
 
     detectCorners = async() => {
@@ -215,18 +221,14 @@ export default class DrawPanel extends React.Component {
             cornerHeight: corners.scaledHeight,
             corners: corners
         });
-
     }
 
     detectObjects = async() => {
 
+        let corners = this.state.corners;
+        let cornerXml = corners.toXML();
         let uploadData = {
-            corners: {
-                topLeft: this.state.topLeft,
-                topRight: this.state.topRight,
-                bottomLeft: this.state.bottomLeft,
-                bottomRight: this.state.bottomRight
-            },
+            xml: cornerXml,
             session_id: StorageService.getItem(StorageService.KEY.SESSION_ID)
         }
 
@@ -241,43 +243,16 @@ export default class DrawPanel extends React.Component {
         });
     }
 
-    updateProperties = (objectId, newName,  minX, minY, maxX, maxY) => {
-        console.log("Update properties")
-        console.log("ObjectId: " + objectId)
-        console.log("newName: " + newName)
-        console.log("xmin: " + minX)
-        console.log("ymin: " + minY)
-        console.log("xmax: " + maxX)
-        console.log("ymax: " + maxY)
-        let detection = this.state.detection;
-        if (detection instanceof Detection) {
-            detection.updateObjectProperties(objectId, newName, minX, minY, maxX, maxY);
-            this.setState({detection: detection});
-        }
-    }
-
-    deleteObject = (objectId) => {
-        console.log("Delete: " + objectId);
-        let detection = this.state.detection;
-        if (detection instanceof Detection) {
-            const onBoardObjects = detection.onBoardObjects;
-            const newObjects = ArrUtils.removeItemById(objectId, onBoardObjects);
-            console.log(newObjects);
-            detection.onBoardObjects = [];
-            console.log(detection);
-            this.setState({detection: detection});
-            console.log(this.state.detection);
-        }
-    }
-
     getProcessedResult = async() => {
+        const detection = this.state.detection;
         let uploadData = {
-            session_id: StorageService.getItem(StorageService.KEY.SESSION_ID)
+            xml: detection.toXML(),
+            session_id: StorageService.getItem(StorageService.KEY.SESSION_ID),
         }
         let result = await AIService.getProcessedResult(uploadData);
 
         this.setState({
-            linkDownloadPPTX: result.pptx
+            processedResult: result
         });
     }
 
@@ -323,7 +298,11 @@ export default class DrawPanel extends React.Component {
 
     handleNextStep = async () => {
         if (!this.state.isSelectedImage) {
-            return alert('Please select an image');
+            this.showModal(
+                'Error',
+                'Please select an image'
+            )
+            return;
         }
         let currentStep = this.state.step;
         if (currentStep >= APP_STEP.DOWNLOAD_PPT) {
@@ -364,6 +343,7 @@ export default class DrawPanel extends React.Component {
                         onNext={this.handleNextStep} 
                         onPrevious={this.handleBackPreviousStep}
                         loading={this.state.loading}
+                        result={this.state.processedResult}
                         />
                     </div>
                     </div>
@@ -372,7 +352,7 @@ export default class DrawPanel extends React.Component {
                     <ShapeProperties 
                     targetObject={this.state.selectedObject} 
                     step={this.state.step}
-                    onSave={(objectId, newName, minX, minY, maxX, maxY) => { this.updateProperties(objectId, newName, minX, minY, maxX, maxY) }}
+                    onSave={(objectId, newName, xMin, yMin, xMax, yMax) => { this.updateActiveObjectProperties(objectId, newName, xMin, yMin, xMax, yMax) }}
                     onDelete={(objectId) => { this.removeActiveObject(objectId)}}
                     />
                 </div>

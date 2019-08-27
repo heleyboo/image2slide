@@ -37,4 +37,16 @@ export default class BndBox {
     set ymax(ymax) {
         this._ymax = ymax; 
     }
+
+    toXML() {
+        let xmlContent = `
+            <bndbox>
+                <xmin>${this._xmin}</xmin>
+                <ymin>${this._ymin}</ymin>
+                <xmax>${this._xmax}</xmax>
+                <ymax>${this._ymax}</ymax>
+            </bndbox>
+        `;
+        return xmlContent;
+    }
 }
