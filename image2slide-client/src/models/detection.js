@@ -23,7 +23,6 @@ export default class Detection {
             return objects;
         }
         if (Array.isArray(annotation.object)) {
-            objects.push(this.parseOnboardObject(annotation.object))
             return annotation.object.map((object) => {
                 return this.parseOnboardObject(object);
             });

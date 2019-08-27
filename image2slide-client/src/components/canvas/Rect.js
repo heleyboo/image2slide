@@ -40,10 +40,10 @@ export default class Rect extends React.Component {
         const bndbox = this.props.bndbox;
         const strokeColor = this.getStrokeColorByObjectName(this.props.name);
         const options = {
-            top: bndbox.ymax,
+            top: bndbox.ymin,
             left: bndbox.xmin,
-            width: bndbox.xmax - bndbox.xmin,
-            height: bndbox.ymax - bndbox.ymin,
+            width: Math.abs(bndbox.xmax - bndbox.xmin),
+            height: Math.abs(bndbox.ymax - bndbox.ymin),
             fill: this.props.fill,
             stroke: strokeColor,
             strokeWidth: this.props.strokeWidth,
@@ -55,19 +55,19 @@ export default class Rect extends React.Component {
             name: this.props.name
         }
         const rect = new fabric.Rect(options)
-        const innerText = this.props.name + ":" + this.props.idx;
-        const text = new fabric.Text(innerText, {
-            fontSize: 10,
-            top: bndbox.ymax - 12,
-            left: bndbox.xmin,
-            textBackgroundColor: strokeColor
-        })
-        const group = new fabric.Group([rect, text], {
-            originX:'center',
-            originY:'center',
-            idx: this.props.idx
-        })
-        this.props.canvas.add(group)
+        // const innerText = this.props.name + ":" + this.props.idx;
+        // const text = new fabric.Text(innerText, {
+        //     fontSize: 10,
+        //     top: bndbox.ymax - 12,
+        //     left: bndbox.xmin,
+        //     textBackgroundColor: strokeColor
+        // })
+        // const group = new fabric.Group([rect, text], {
+        //     originX:'left',
+        //     originY:'top',
+        //     idx: this.props.idx
+        // })
+        this.props.canvas.add(rect)
     }
 
     render() {

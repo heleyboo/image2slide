@@ -132,11 +132,25 @@ export default class DrawPanel extends React.Component {
         this.setState({drawing: false});
     }
 
-    handleOjectSelection = (objectId) => {
+    handleOjectSelection = (objectId, xMin, yMin, xMax, yMax) => {
         let detection = this.state.detection;
         if (detection instanceof Detection) {
             const selectedObject = detection.getObjectById(objectId);
-            this.setState({selectedObject: selectedObject});
+
+            if (selectedObject instanceof Rect) {
+                selectedObject.bndbox = new BndBox(xMin, yMin, xMax, yMax);
+            }
+
+            if (selectedObject instanceof Line) {
+                selectedObject.position = new Position(xMin, yMin, xMax, yMax);
+            }
+
+            console.log(detection);
+
+            this.setState({
+                selectedObject: selectedObject,
+                detection: detection
+            });
         }
     }
 
@@ -177,7 +191,7 @@ export default class DrawPanel extends React.Component {
             imageSource={this.state.imageSrc}
             drawing={this.state.drawing}
             scale={this.state.scaleDetectionBoard}
-            onObjectSelected={(objectId) => this.handleOjectSelection(objectId)}
+            onObjectSelected={(objectId, xMin, yMin, xMax, yMax) => this.handleOjectSelection(objectId, xMin, yMin, xMax, yMax)}
             onCanvasMousedown={(x1, y1, x2, y2) => this.handleCanvasMousedown(x1, y1, x2, y2)}
             onUpdateObject={(objectId, newName, xmin, ymin, xmax, ymax) => this.onUpdateObject(objectId, newName, xmin, ymin, xmax, ymax)}
             onRemoveObject={(objectId) => {this.onRemoveObject(objectId)}}

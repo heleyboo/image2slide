@@ -39,10 +39,7 @@ export default class DesignCanvas extends Component {
     }
 
     componentDidMount() {
-        const canvas = new fabric.Canvas(this.c, {
-            originX:'left',
-            originY:'bottom'
-        })
+        const canvas = new fabric.Canvas(this.c)
 
         canvas.setBackgroundImage(this.props.imageSource, canvas.renderAll.bind(canvas), {
             backgroundImageOpacity: 1,
@@ -61,7 +58,7 @@ export default class DesignCanvas extends Component {
                 this.mousemove(e);
             });
             canvas.observe('mouse:up', (e) => {
-                this.mouseup();
+                this.mouseup(e);
             });
 
             canvas.on('mouse:over', (e) => {
@@ -93,13 +90,19 @@ export default class DesignCanvas extends Component {
     }
 
     handleSelectObject = (e) => {
-        if (e && e.target && this.props.onObjectSelected) {
+        if (e && e.target && this.props.onObjectSelected && this.state.canvas.getActiveObject()) {
             let activeObject = this.state.canvas.getActiveObject();
             console.log("top: " + activeObject.get('top'))
             console.log("left: " + activeObject.get('left'))
             console.log("width: " + activeObject.get('width'))
             console.log("height: " + activeObject.get('height'))
-            this.props.onObjectSelected(e.target.get('idx'));
+            console.log(activeObject)
+            let objectId = activeObject.get('idx');
+            let xMin = activeObject.get('left');
+            let yMin = activeObject.get('top');
+            let xMax = xMin + activeObject.get('width');
+            let yMax = yMin + activeObject.get('height');
+            this.props.onObjectSelected(objectId, xMin, yMin, xMax, yMax);
         }
     }
 
@@ -120,15 +123,24 @@ export default class DesignCanvas extends Component {
             const h = Math.abs(yMax - yMin);
             let activeObject = this.state.canvas.getActiveObject();
             console.log(activeObject);
+            if (!activeObject) {
+                return;
+            }
             if (activeObject.get('type') === FABRIC_OBJECT_TYPE.GROUP) {
                 let rect = activeObject.item(0);
-                rect.set('width', w).set('height', h);
+                rect.set('width', w).set('height', h).setCoords();
                 activeObject.set('width', w).set('height', h).
-                set('top', yMin).set('left', xMin);
+                set('top', yMin).set('left', xMin).setCoords();
             }
+
+            if (activeObject.get('type') === FABRIC_OBJECT_TYPE.RECT) {
+                activeObject.set('width', w).set('height', h).
+                set('top', yMin).set('left', xMin).setCoords();
+            }
+
             if (activeObject.get('type') === FABRIC_OBJECT_TYPE.LINE) {
-                activeObject.set({ 'x1': xMin, 'y1': yMin });
-                activeObject.set({ 'x2': xMax, 'y2': yMax });
+                activeObject.set({ 'x1': xMin, 'y1': yMin })
+                .set({ 'x2': xMax, 'y2': yMax }).setCoords();
             }
             this.state.canvas.renderAll();
         }
@@ -213,7 +225,7 @@ export default class DesignCanvas extends Component {
 
     mouseup = (e) => {
         if (!DrawService.isInDrawingMode()) {
-            return;
+            return this.handleSelectObject(e);
         }
         if(this.state.started) {
             this.setState({started: false});

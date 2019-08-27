@@ -9,8 +9,8 @@ export default class DrawService {
         selectable: false,
         evented: false,
         strokeDashArray: [0, 0],
-        originX: 'center',
-        originY: 'center'
+        originX:'left',
+        originY:'top',
     }
 
     static isInDrawingMode = () => {

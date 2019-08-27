@@ -39,8 +39,8 @@ export default class Rect extends OnboardObject {
             textBackgroundColor: 'red'
         });
         return new fabric.Group([rect, text], {
-            originX:'center',
-            originY:'center',
+            originX:'left',
+            originY:'top',
             idx: this._id
         });
     }

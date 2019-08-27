@@ -32,7 +32,14 @@ export default class DetectionBoard extends Component {
 
     updateActiveObjectProperties = (objectId, name, xMin, yMin, xMax, yMax) => {
         if (this.child) {
-            this.child.updateObjectProperties(objectId, name, xMin, yMin, xMax, yMax);
+            this.child.updateObjectProperties(
+                objectId, 
+                name, 
+                parseInt(xMin), 
+                parseInt(yMin), 
+                parseInt(xMax), 
+                parseInt(yMax)
+            );
         }
     }
     
@@ -43,7 +50,7 @@ export default class DetectionBoard extends Component {
             imageSource={this.props.imageSource}
             onDrawEnded={this.props.onDrawEnded}
             drawing={this.props.drawing}
-            onObjectSelected={(objectId) => this.props.onObjectSelected(objectId)}
+            onObjectSelected={(objectId, xMin, yMin, xMax, yMax) => this.props.onObjectSelected(objectId, xMin, yMin, xMax, yMax)}
             onCanvasMousedown={(x1, y1, x2, y2) => this.props.onCanvasMousedown(x1, y1, x2, y2)}
             scale={this.props.scale}
             data={this.props.data}
