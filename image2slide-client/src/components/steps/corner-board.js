@@ -73,6 +73,7 @@ export default class CornerBoard extends Component {
             type={CANVAS_BOARD_TYPE.CORNER}
             width={this.props.width}
             height={this.props.height}
+            scale={this.props.scale}
             onMoving={(objId, top, left) => this.props.onMovingCorners(objId, top, left)}
             imageSource={this.props.imageSource}>
                 <Line key={1} name="topLeft" idx="1" position={positionLine1} />

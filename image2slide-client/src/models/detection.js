@@ -4,21 +4,34 @@ import Position from './position';
 import Rect from './rect';
 import BndBox from './bndbox';
 import OnboardObject from './onboardobject';
+import { DEFAULT_CANVAS_SIZE } from '../constants/index';
+import { type } from 'os';
 
 export default class Detection {
-    constructor(canvasWidth, annotation) {
-        this._scale = annotation.size && annotation.size.width ? canvasWidth / parseFloat(annotation.size.width) : 1;
+    constructor(annotation) {
+        this._scale = annotation.size && annotation.size.width ? DEFAULT_CANVAS_SIZE.WIDTH / parseFloat(annotation.size.width) : 1;
         this._width = parseFloat(annotation.size.width) * this._scale;
         this._height = parseFloat(annotation.size.height) * this._scale;
-        this._depth = parseInt(annotation.depth);
+        this._depth = parseInt(annotation.size.depth);
         this._filename = annotation.filename;
         this._onBoardObjects = this.parseObjects(annotation);
     }
 
     parseObjects(annotation) {
-        return annotation.object.map((object) => {
-            return this.parseOnboardObject(object);
-        });
+        let objects = [];
+        if (!annotation.object) {
+            return objects;
+        }
+        if (Array.isArray(annotation.object)) {
+            objects.push(this.parseOnboardObject(annotation.object))
+            return annotation.object.map((object) => {
+                return this.parseOnboardObject(object);
+            });
+        } else {
+            objects.push(this.parseOnboardObject(annotation.object));
+            return objects;
+        }
+        
     }
 
     parseOnboardObject(object) {
@@ -59,6 +72,10 @@ export default class Detection {
 
     get onBoardObjects() {
         return this._onBoardObjects;
+    }
+
+    get scale() {
+        return this._scale;
     }
 
     set onBoardObjects(objects) {

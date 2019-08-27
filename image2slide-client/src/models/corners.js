@@ -1,7 +1,8 @@
+import { DEFAULT_CANVAS_SIZE } from '../constants/index';
 export default class Corners {
-    constructor(canvasWidth, annotation) {
+    constructor(annotation) {
         this._filename = annotation.filename;
-        this._scale = annotation.size && annotation.size.width ? canvasWidth / parseFloat(annotation.size.width) : 1;
+        this._scale = annotation.size && annotation.size.width ? DEFAULT_CANVAS_SIZE.WIDTH / parseInt(annotation.size.width) : 1;
         this._topLeft = this.parseCorners(annotation, 'top_left');
         this._topRight = this.parseCorners(annotation, 'top_right');
         this._bottomLeft = this.parseCorners(annotation, 'bottom_left');
@@ -10,9 +11,9 @@ export default class Corners {
         this._scaledTopRight = this.calculateScaled(this._topRight);
         this._scaledBottomLeft = this.calculateScaled(this._bottomLeft);
         this._scaledBottomRight = this.calculateScaled(this._bottomRight);
-        this._width = annotation.size && annotation.size.width ? parseFloat(annotation.size.width) : 0;
-        this._height = annotation.size && annotation.size.height ? parseFloat(annotation.size.height) : 0;
-        this._depth = annotation.size && annotation.size.depth ? parseFloat(annotation.size.depth) : 0;
+        this._width = annotation.size && annotation.size.width ? parseInt(annotation.size.width) : 0;
+        this._height = annotation.size && annotation.size.height ? parseInt(annotation.size.height) : 0;
+        this._depth = annotation.size && annotation.size.depth ? parseInt(annotation.size.depth) : 0;
         this._scaledWidth = this._width * this._scale;
         this._scaledHeight = this._height * this._scale;
     }
@@ -24,8 +25,8 @@ export default class Corners {
                 const element = objects[index];
                 if (element && element.name && element.name === name) {
                     let ret = {
-                        x: parseFloat(element.position.x),
-                        y: parseFloat(element.position.y)
+                        x: parseInt(element.position.x),
+                        y: parseInt(element.position.y)
                     }
                     return ret;
                 }

@@ -26,8 +26,8 @@ export default class Line extends Component {
         fill: 'orange',
         stroke: 'red',
         strokeWidth: 2,
-        selectable: true,
-        evented: true,
+        selectable: false,
+        evented: false,
         strokeDashArray: [0, 0],
         originX: 'center',
         originY: 'center'

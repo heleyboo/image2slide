@@ -50,7 +50,9 @@ export default class DrawPanel extends React.Component {
             detection: null,
             showModal: false,
             modalTitle: '',
-            modalContent: ''
+            modalContent: '',
+            scaleCornerBoard: 1,
+            scaleDetectionBoard: 1
         };
     }
 
@@ -120,6 +122,7 @@ export default class DrawPanel extends React.Component {
             imageSource={this.state.imageSrc}
             width={this.state.cornerWidth}
             height={this.state.cornerHeight}
+            scale={this.state.scaleCornerBoard}
             onMovingCorners={(objId, top, left) => this.onMovingCorners(objId, top, left)}
             />
         );
@@ -173,6 +176,7 @@ export default class DrawPanel extends React.Component {
             onDrawEnded={this.onDrawEnded}
             imageSource={this.state.imageSrc}
             drawing={this.state.drawing}
+            scale={this.state.scaleDetectionBoard}
             onObjectSelected={(objectId) => this.handleOjectSelection(objectId)}
             onCanvasMousedown={(x1, y1, x2, y2) => this.handleCanvasMousedown(x1, y1, x2, y2)}
             onUpdateObject={(objectId, newName, xmin, ymin, xmax, ymax) => this.onUpdateObject(objectId, newName, xmin, ymin, xmax, ymax)}
@@ -207,10 +211,8 @@ export default class DrawPanel extends React.Component {
 
         AIService.storeCornerInformation(cornersRes);
 
-        let mainBoardWidth = document.getElementById('main-board').offsetWidth;
-        let canvasWidth = mainBoardWidth - 40;
-
-        let corners = new Corners(canvasWidth, cornersRes.annotation);
+        let corners = new Corners(cornersRes.annotation);
+        console.log(corners);
 
         this.setState({
             topLeft: corners.scaledTopLeft,
@@ -219,6 +221,7 @@ export default class DrawPanel extends React.Component {
             bottomLeft: corners.scaledBottomLeft,
             cornerWidth: corners.scaledWidth,
             cornerHeight: corners.scaledHeight,
+            scaleCornerBoard: corners.scale,
             corners: corners
         });
     }
@@ -234,12 +237,12 @@ export default class DrawPanel extends React.Component {
 
         let detectResult = await AIService.detectObjectcs(uploadData);
 
-        let mainBoardWidth = document.getElementById('main-board').offsetWidth;
-        let canvasWidth = mainBoardWidth - 40;
-        let detection = new Detection(canvasWidth, detectResult.annotation);
+        let detection = new Detection(detectResult.annotation);
+        console.log(detection);
         this.setState({
             detectedObjets: [],
-            detection: detection
+            detection: detection,
+            scaleDetectionBoard: detection.scale
         });
     }
 

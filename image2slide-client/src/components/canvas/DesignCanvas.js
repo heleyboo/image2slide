@@ -1,6 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { CANVAS_BOARD_TYPE, DRAWING_MODE, LINE_ITEM, FABRIC_OBJECT_TYPE } from '../../constants/index'
+import { 
+    CANVAS_BOARD_TYPE, 
+    DRAWING_MODE, 
+    LINE_ITEM, 
+    FABRIC_OBJECT_TYPE,
+    DEFAULT_CANVAS_SIZE
+} from '../../constants/index'
 import DrawService from '../../services/drawservice';
 import Rect from '../../models/rect';
 
@@ -18,8 +24,8 @@ export default class DesignCanvas extends Component {
     }
 
     static defaultProps = {
-        width: 800,
-        height: 600,
+        width: DEFAULT_CANVAS_SIZE.WIDTH,
+        height: DEFAULT_CANVAS_SIZE.HEIGHT,
         drawing: false
     }
 
@@ -41,6 +47,8 @@ export default class DesignCanvas extends Component {
         canvas.setBackgroundImage(this.props.imageSource, canvas.renderAll.bind(canvas), {
             backgroundImageOpacity: 1,
             backgroundImageStretch: false,
+            scaleX: this.props.scale,
+            scaleY: this.props.scale,
         });
 
         canvas.selection = false;
@@ -86,6 +94,11 @@ export default class DesignCanvas extends Component {
 
     handleSelectObject = (e) => {
         if (e && e.target && this.props.onObjectSelected) {
+            let activeObject = this.state.canvas.getActiveObject();
+            console.log("top: " + activeObject.get('top'))
+            console.log("left: " + activeObject.get('left'))
+            console.log("width: " + activeObject.get('width'))
+            console.log("height: " + activeObject.get('height'))
             this.props.onObjectSelected(e.target.get('idx'));
         }
     }
@@ -98,7 +111,10 @@ export default class DesignCanvas extends Component {
     }
 
     updateObjectProperties = (objectId, name, xMin, yMin, xMax, yMax) => {
-        console.log("Saved");
+        console.log(xMin)
+        console.log(yMin)
+        console.log(xMax)
+        console.log(yMax)
         if (this.state.canvas) {
             const w = Math.abs(xMax - xMin);
             const h = Math.abs(yMax - yMin);
@@ -107,6 +123,8 @@ export default class DesignCanvas extends Component {
             if (activeObject.get('type') === FABRIC_OBJECT_TYPE.GROUP) {
                 let rect = activeObject.item(0);
                 rect.set('width', w).set('height', h);
+                activeObject.set('width', w).set('height', h).
+                set('top', yMin).set('left', xMin);
             }
             if (activeObject.get('type') === FABRIC_OBJECT_TYPE.LINE) {
                 activeObject.set({ 'x1': xMin, 'y1': yMin });
@@ -167,7 +185,7 @@ export default class DesignCanvas extends Component {
 
     mousemove = (e) => {
         if (!DrawService.isInDrawingMode()) {
-            return this.handleSelectObject(e);
+            return;
         }
         if(!this.state.started) {
             return false;
@@ -195,7 +213,7 @@ export default class DesignCanvas extends Component {
 
     mouseup = (e) => {
         if (!DrawService.isInDrawingMode()) {
-            return this.handleSelectObject(e);
+            return;
         }
         if(this.state.started) {
             this.setState({started: false});

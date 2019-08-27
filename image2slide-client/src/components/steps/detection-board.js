@@ -16,7 +16,7 @@ export default class DetectionBoard extends Component {
         if (detectionObjects && detectionObjects.length > 0) {
             return detectionObjects.map((object, index) => {
                 if (object instanceof LineObj) {
-                    return <Line key={index} name={object.name} idx={object.id} position={object.position} />
+                    return <Line key={index} name={object.name} idx={object.id} position={object.position} selectable={true} evented={true} />
                 } else if (object instanceof RectObj) {
                     return <Rect key={index} name={object.name} idx={object.id} bndbox={object.bndbox} strokeWidth={2} />
                 }
@@ -45,6 +45,7 @@ export default class DetectionBoard extends Component {
             drawing={this.props.drawing}
             onObjectSelected={(objectId) => this.props.onObjectSelected(objectId)}
             onCanvasMousedown={(x1, y1, x2, y2) => this.props.onCanvasMousedown(x1, y1, x2, y2)}
+            scale={this.props.scale}
             data={this.props.data}
             ref={instance => { this.child = instance; }}
             >
