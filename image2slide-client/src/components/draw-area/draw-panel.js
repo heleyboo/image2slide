@@ -22,6 +22,7 @@ import { file } from '@babel/types';
 import MModal from '../modal';
 import ArrUtils from '../../utils/arrutils';
 import ProcessedResultBoard from '../steps/processed-result-board';
+import { MESSAGES } from '../../message';
 export default class DrawPanel extends React.Component {
 
     constructor(props) {
@@ -73,10 +74,7 @@ export default class DrawPanel extends React.Component {
                 });
                 this.handleNextStep();
             } else {
-                this.showModal(
-                    'Wrong image type',
-                    'Please input an image.  Accepted image types ["image/gif", "image/jpeg", "image/png"]'
-                )
+                this.showMessage(MESSAGES.WRONG_IMAGE_TYPE);
             }
         }
           
@@ -84,11 +82,10 @@ export default class DrawPanel extends React.Component {
         
     }
 
-    showModal = (title, content) => {
+    showMessage = (message) => {
         this.setState({
             showModal: true,
-            modalTitle: title,
-            modalContent: content
+            message: message
         });
     }
 
@@ -248,16 +245,22 @@ export default class DrawPanel extends React.Component {
             xml: cornerXml,
             session_id: StorageService.getItem(StorageService.KEY.SESSION_ID)
         }
-
+        
         let detectResult = await AIService.detectObjectcs(uploadData);
 
-        let detection = new Detection(detectResult.annotation);
-        console.log(detection);
-        this.setState({
-            detectedObjets: [],
-            detection: detection,
-            scaleDetectionBoard: detection.scale
-        });
+        if (detectResult && detectResult.error_code) {
+            throw detectResult.error_code;
+        }
+        if (detectResult.annotation) {
+            let detection = new Detection(detectResult.annotation);
+            this.setState({
+                detectedObjets: [],
+                detection: detection,
+                scaleDetectionBoard: detection.scale
+            });
+        } else {
+            throw MESSAGES.NO_DETECTED_OBJECTS;
+        }
     }
 
     getProcessedResult = async() => {
@@ -292,34 +295,36 @@ export default class DrawPanel extends React.Component {
 
     processNextStep = async(currentStep) => {
         this.setState({loading: true});
-
-        switch(currentStep) {
-            case APP_STEP.UPLOAD_IMAGE:
-                await this.detectCorners();
-                break;
-            case APP_STEP.DETECT_CORNERS:
-                await this.detectObjects();
-                break;
-            case APP_STEP.DETECT_OBJECTS:
-                await this.getProcessedResult();
-                break;
+        try {
+            switch(currentStep) {
+                case APP_STEP.UPLOAD_IMAGE:
+                    await this.detectCorners();
+                    break;
+                case APP_STEP.DETECT_CORNERS:
+                    await this.detectObjects();
+                    break;
+                case APP_STEP.DETECT_OBJECTS:
+                    await this.getProcessedResult();
+                    break;
+            }
+            let nextStep = currentStep + 1;
+            this.setState({ 
+                step: nextStep
+            });
+            this.props.updateStep(nextStep);
+        } catch (error) {
+            this.showMessage(MESSAGES[error]);
+            return;
+        } finally {
+            this.setState({ 
+                loading: false
+            });
         }
-        
-        let nextStep = currentStep + 1;
-        this.setState({ 
-            step: nextStep,
-            loading: false
-        });
-        this.props.updateStep(nextStep);
     }
 
     handleNextStep = async () => {
         if (!this.state.isSelectedImage) {
-            this.showModal(
-                'Error',
-                'Please select an image'
-            )
-            return;
+            return this.showMessage(MESSAGES.NO_INPUT_IMAGE);
         }
         let currentStep = this.state.step;
         if (currentStep >= APP_STEP.DOWNLOAD_PPT) {
@@ -343,8 +348,7 @@ export default class DrawPanel extends React.Component {
             <div className="panel-body">
                 <MModal 
                 show={this.state.showModal}
-                title={this.state.modalTitle}
-                content={this.state.modalContent}
+                message={this.state.message}
                 onModalClose={() => {this.setState({showModal: false})}}
                 />
                 <div className="col-md-2 col-xs-12">
