@@ -74,6 +74,7 @@ export default class DrawPanel extends React.Component {
                 });
                 this.handleNextStep();
             } else {
+                console.log("1111")
                 this.showMessage(MESSAGES.WRONG_IMAGE_TYPE);
             }
         }
@@ -83,10 +84,12 @@ export default class DrawPanel extends React.Component {
     }
 
     showMessage = (message) => {
+        console.log(message)
         this.setState({
             showModal: true,
             message: message
         });
+        return;
     }
 
     renderStep = (step) => {
@@ -213,17 +216,25 @@ export default class DrawPanel extends React.Component {
         return <ProcessedResultBoard result={this.state.processedResult}/>
     }
 
+    handleResponse = (res) => {
+        if (res && res.error_code) {
+            throw res.error_code;
+        }
+        return res;
+    }
+
     detectCorners = async() => {
 
         const formData = new FormData();
         formData.append('image', this.state.selectedFile);
 
-        let cornersRes = await AIService.detectCorners(formData);
+        let res = await AIService.detectCorners(formData);
+        let cornersRes = this.handleResponse(res);
 
         AIService.storeCornerInformation(cornersRes);
+        StorageService.setItem(StorageService.KEY.SESSION_ID, cornersRes.session_id);
 
         let corners = new Corners(cornersRes.annotation);
-        console.log(corners);
 
         this.setState({
             topLeft: corners.scaledTopLeft,
@@ -248,8 +259,9 @@ export default class DrawPanel extends React.Component {
         
         let detectResult = await AIService.detectObjectcs(uploadData);
 
-        if (detectResult && detectResult.error_code) {
-            throw detectResult.error_code;
+        if (detectResult && detectResult.error) {
+            console.log("1111")
+            this.showMessage(detectResult.message);
         }
         if (detectResult.annotation) {
             let detection = new Detection(detectResult.annotation);
@@ -313,6 +325,7 @@ export default class DrawPanel extends React.Component {
             });
             this.props.updateStep(nextStep);
         } catch (error) {
+            console.log(error)
             this.showMessage(MESSAGES[error]);
             return;
         } finally {
@@ -324,6 +337,7 @@ export default class DrawPanel extends React.Component {
 
     handleNextStep = async () => {
         if (!this.state.isSelectedImage) {
+            console.log("1111")
             return this.showMessage(MESSAGES.NO_INPUT_IMAGE);
         }
         let currentStep = this.state.step;

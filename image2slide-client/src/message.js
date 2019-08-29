@@ -1,14 +1,20 @@
 export const MESSAGES = {
     UNKNOW_ERROR: {
-        code: 5001,
+        code: 5000,
         title: 'Unknow error',
         content: 'An unknown error has been occured',
     },
     API_SERVER_ERROR: {
-        code: 5000,
+        code: 5001,
         title: 'API Server error',
-        content: 'API server error, please contact server administrators',
+        content: 'API server error, please contact administrators',
     },
+    AI_CONN_ERROR: {
+        code: 5002,
+        title: 'API Server error',
+        content: '[5002] Could not connect to AI module, please contact administrators',
+    },
+
     NO_DETECTED_OBJECTS: {
         code: 5001,
         title: 'API Server error',

@@ -2,19 +2,7 @@ import { API_SERVER, LOCAL_STORAGE_ITEMS } from '../constants/index';
 import { async } from 'q';
 
 export default class AIService {
-
-    static handleResponse = (response) => {
-        console.log(response)
-        if (!response.ok) {
-            throw {
-                code: response.statusCode,
-                title: 'Server error',
-                content: response.statusText
-            }
-        }
-        return response.json();
-    }
-
+    
     static detectCorners = async(data) => {
         let uploadData = {
             method: 'POST',
@@ -23,7 +11,7 @@ export default class AIService {
         }
 
         return await fetch(API_SERVER.UPLOAD_IMAGE, uploadData)
-        .then((res) => AIService.handleResponse(res));
+        .then((res) => res.json());
     }
 
     static detectObjectcs = async(data) => {
@@ -33,7 +21,7 @@ export default class AIService {
             body: JSON.stringify(data)
         }
         return await fetch(API_SERVER.DETECT_OBJECTS, uploadData)
-        .then((res) => AIService.handleResponse(res));
+        .then((res) => res.json());
     }
 
     static getProcessedResult = async(data) => {
@@ -43,7 +31,7 @@ export default class AIService {
             body: JSON.stringify(data)
         }
         return await fetch(API_SERVER.GET_PROCESSED_RESULT, uploadData)
-        .then((res) => AIService.handleResponse(res));
+        .then((res) => res.json());
     }
 
     static storeCornerInformation = (corners) => {
